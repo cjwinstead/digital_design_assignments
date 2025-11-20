@@ -1,0 +1,693 @@
+\documentclass[10pt, onecolumn]{scrartcl}
+\input{preamble.tex}
+
+%\usepackage{inconsolata}
+
+%\fvset{fontfamily=inconsolata}
+
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{ECE 2700 Lab 2\\ Combinational Logic\\ and Seven Segment Displays}
+\subtitle{Due at the end of your registered lab session (120 points)}
+\date{}
+\maketitle
+
+\vspace{-0.5in}
+
+\begin{center}
+{\Large Objectives} \\
+\vspace{0.1cm}
+\begin{itemize}
+	\item Design using truth tables and combinational logic.
+	\item Derive efficient Boolean expressions from Truth Tables.
+	\item Design and verify modules with multi-bit signals.
+	\item Display information on a seven-segment display.
+	\item Utilize hierarchy to simplify design of a basic system.
+	\item Examine alternative Verilog syntax for Combinational and Truth-Table designs:
+	\begin{itemize}
+		\item if-then vs case statements
+		\item always/reg vs assign/wire
+		\item individual signals vs vector assignments
+		\item single-bit logic operators (\texttt{!, \&\&, ||})
+		\item bitwise logic operators (\texttt{$\sim$,|,\&,$^\wedge$})
+		\item concatenation (\texttt{\{x\}}) and repetition (\texttt{\{7\{x\}\}})  operators
+	\end{itemize}
+\end{itemize}
+
+\end{center}
+
+\vspace{0.3cm}
+\section{Pre-Lab Preparation}
+% Study section 2.6, ``Representations of Boolean Functions,'' and
+% 2.7, ``Combinational Logic Design Process,'' in your textbook. Pay
+% special attention to Example 2.23, since we will be implementing the
+% seven-segment display using multiple techniques. In the book
+% example, the truth table is used to construct long Boolean
+% expressions for signals $a$ and $b$. We can use our knowledge of
+% Boolean algebra to derive simpler expressions. For example, study
+% the truth table for signal $a$. For now, just pay attention to the
+% rows for digits 0--9:
+We will be implementing the seven-segment display using multiple
+techniques in this lab. The circuit view and the truth table from Figure
+2.63 (a) and (b) of the textbook are shown below. 
+\begin{center}
+  \includegraphics[width=0.4\textwidth]{images/sevenSeg_cct.png}
+  \hspace{1cm}
+  \includegraphics[width=0.4\textwidth]{images/sevenSeg_truthTable.png}
+\end{center}  
+
+We can use our knowledge of \emph{sum-of-products} (SOP),
+\emph{product-of-sums} (POS), and Boolean algebra to derive and
+minimize expressions for each output signal from $a$ to $g$. For
+example, study the truth table for signal $a$. 
+\begin{center}
+	\begin{tabular}{cccc|c}
+		$x_3$ & $x_2$ & $x_1$ & $x_0$ & $a$ \\
+		\hline
+		0 & 0 & 0 & 0    & 1 \\
+		0 & 0 & 0 & 1    & 0 \\
+		0 & 0 & 1 & 0    & 1 \\
+		0 & 0 & 1 & 1    & 1 \\
+		0 & 1 & 0 & 0    & 0 \\
+		0 & 1 & 0 & 1    & 1 \\
+		0 & 1 & 1 & 0    & 1 \\
+		0 & 1 & 1 & 1    & 1 \\
+		1 & 0 & 0 & 0    & 1 \\
+		1 & 0 & 0 & 1    & 1 \\
+ 	\end{tabular}
+\end{center}
+
+
+Notice that \textbf{only two positions have zero values}. This
+suggests that using the POS form make a shorter expression for $a$.
+\begin{align*}
+  a &= (x_3 + x_2 + x_1 + \bar{x}_0) (x_3 + \bar{x}_2 + x_1 + x_0)&\\
+     &= ((x_3 + x_1) + x_2 + \bar{x}_0) ((x_3 + x_1) + \bar{x}_2 +
+       x_0) & \text{10b. (Commutative)}\\
+     &= (x_3 + x_1) + (x_2 + \bar{x}_0) (\bar{x}_2 + x_0)
+                                                                  &\text{12b. (Distributive)}\\
+     &= (x_3 + x_1) + (x_2 \bar{x}_2 + \bar{x}_0 \bar{x}_2 +
+       x_2x_0 + \bar{x}_0x_0)&\text{12a. (Distributive)}\\
+     &= (x_3 + x_1) + (0 + \bar{x}_0 \bar{x}_2 +
+       x_2x_0 + 0)&\text{8a}\\
+     &= x_3 + x_1 + x_0x_2 + \bar{x}_0 \bar{x}_2&\text{10a. (Commutative)}
+\end{align*}
+
+% %This means we can make a shorter expression for $a'$ by looking just at the zero entries:
+% \begin{center}
+% 	\begin{tabular}{cccc|c}
+% 		$x_3$ & $x_2$ & $x_1$ & $x_0$ & $a$ \\
+% 		\hline
+% 		0 & 0 & 0 & 1    & 0 \\
+% 		0 & 1 & 0 & 0    & 0 \\
+%  	\end{tabular}
+% \end{center}
+% From this table, we can apply DeMorgan's Laws to simplify a new expression for $a$:
+% \begin{align*}
+% 	a &= \overline{x_3'x_1'\left(x_2'x_0 + x_2x_0'\right)}\\
+% 	 &= \overline{x_3'x_1'} + \overline{\left(x_2'x_0 + x_2x_0'\right)}\\
+% 	 &= x_3 + x_1 + \overline{\left(x_2'x_0\right)}\cdot \overline{\left(x_2x_0'\right)}\\
+% 	 &= x_3 + x_1 + \left(x_2 + x_0'\right)\left(x_2' + x_0\right)\\
+% 	 &= x_3 + x_1 + x_2x_0 + x_2'x_0'
+% \end{align*}
+We can apply the same method to get a simplified expression for $b$:
+\begin{align*}
+	b &= \bar{x}_2 + x_1x_0 + \bar{x}_1\bar{x}_0
+\end{align*}
+
+\textbf{Your Assignment:} 
+\begin{enumerate}
+\item Using this technique, find minimal expressions for $d$, $e$, and $f$, and \textbf{verify your expression against the given truth table.} The remaining expressions for segments $c$ and $g$ will be provided for you. % \textbf{You only need to consider the first ten rows of Table 2.4}. (Hint: my solution for $c$ and $d$ reduces to three terms and five terms, respectively).
+
+\item Note that for four input signals, there should be $2^4=16$ input
+  combinations. The truth table above is missing the last six
+  rows. For these rows, the inputs do not represent a decimal digit and should be considered \textbf{invalid}. We will define a signal named \texttt{NAN} (short for ``Not a Number'') to detect these cases. Derive a minimized logic expression for \texttt{NAN}. Verify that your expression detects \textbf{only digits greater than nine}.
+
+\item Read all the Verilog syntax discussion in this document before coming your lab session.
+\item Complete the Lab 2 Quiz before the start of the first dedicated lab session for Lab2
+
+\textbf{TA PASS OFF: Show your TA your completed pre-lab work. }
+\end{enumerate}
+
+\section{Overview}
+In this lab, you will create a clock divider, very useful for later labs, and implement two different seven-segment display modules using different techniques. These modules will drive a single digit of the Basys3 board's seven-segment display. 
+
+%In this lab, you will implement three seven-segment display modules using three different design techniques. Each of your modules will drive one digit of the Basys3 board's seven-segment displays. In the first exercise, you will use the clock divider to slowly increment the number displayed on each digit; for this purpose, you will learn the clocked logic in Section~\ref{sec:introClkLogic} first, and then reuse this clock divider for this lab. 
+% You will then improve on this system by allowing the user to control the increments by pressing a button. 
+% Lastly, you will implement a simple state machine to ``debounce'' the button input, so that the clock can run at faster speeds.
+
+\section{Introduction to Clocked Logic}\label{sec:introClkLogic}
+
+Now let's shift attention and experiment with the board's built-in clock resource. The Basys3 has a system clock rate with frequency \SI{100}{\mega\hertz}. In this exercise, we will create a \textbf{clock divider} module to slow down the clock so that we can observe step-by-step events. We will reduce the clock rate to \SI{2}{\hertz}, i.e.\ two events per second, so that you can actually see the clock tick. A slow, observable clock can be useful for studying and debugging sequential logic circuits.
+
+\subsection{Design}
+In Xilinx Vivado, create a New Project named \texttt{ClockDivider}. Follow the wizard steps described in the first part of this lab, and create a new Verilog Design Source for a module named \textbf{ClockDivider.v}. Your module should have one input and one output, and the initial template code should look like this (header comments are not shown):
+
+\begin{lstlisting}
+`timescale 1 ns/1 ns
+
+module ClockDivider #(parameter PRESCALER = 25_000_000)(
+	input clkin,
+	output reg clkout // <--- add the "reg" keyword here
+	);
+
+endmodule
+\end{lstlisting}
+
+Here is a quick note about the \texttt{parameter} keyword. It is placed between the module name and the opening parenthesis for the port declarations with its own set of parentheses with a leading \# symbol. The keyword \texttt{parameter} is used to provide different customizations to a module instance. A default value can be assigned to the \texttt{parameter}, here, 25 million is used as the default. Later we will override this value in the simulation testbench. For a hierarchical design, parameters can be passed down from a top-level Verilog module to the instantiations of lower-level modules within the top-level module. It is similar to the \#define statement in C++.% More on this later.
+
+Notice that the keyword \texttt{reg} is inserted in the declaration of \texttt{clkout}. This means that the \texttt{clkout} signal will be defined {\em behaviorally} in an \texttt{always} block. 
+
+To divide the clock rate, we'll use a simple counter method. We will declare a \texttt{count} variable, initialize it at zero, and increment by one in each cycle of \texttt{clkin}. Once the count adds up to a divisor \texttt{N}, we will flip \texttt{clkout}. Then the frequency of \texttt{clkout} should be 
+\[ f_\textrm{out} = \frac{f_\textrm{in}}{2N}. \]
+If the input frequency is $f_\textrm{in} = \SI{100e6}{\hertz}$, then to get an output frequency of \SI{2}{\hertz} we need $N=\SI{25e6}{}$. To represent such a big number in Verilog, we first need to know how many bits are required, which is 
+\[ \left\lceil \log_2 N\right\rceil = \SI{25}{bits}.\]
+%As an exercise, try converting $N$ to binary (the answer is in the code shown below). 
+To implement the clock divider, we add these lines into the module definition:
+
+\begin{lstlisting}
+	reg [24:0] count;
+	
+	initial begin
+		count  = 0;
+		clkout = 0;
+	end
+	
+	always @(posedge clkin) begin
+		if (count == PRESCALER) begin
+			count <= 0;
+			clkout <= ~clkout;
+		end
+		else begin
+			count <= count + 1;
+		end
+	end
+\end{lstlisting}
+
+In this code, the 25-bit variable \texttt{count} is treated, by default, as an integer. The code in the \texttt{always} block is executed \textbf{synchronously} with the rising edge of the input clock. At each clock, \texttt{count} is incremented by 1. When \texttt{count} reaches \SI{25e6}{}, the PRESCALER value, \texttt{clkout} is \textbf{toggled} (the \texttt{$\sim$} symbol means ``not'').
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+\subsection{Simulate}
+Now we will create a \textbf{testbench} for the ClockDivider module. %
+%Xilinx ISE provides a shortcut that automatically generates a testbench template for you: click \texttt{New Source} and select \texttt{Verilog Test Fixture} as the source type. Name the file \texttt{ClockDividerTest.v}. It will ask you which module to associate your new test fixture. Select \texttt{ClockDivider.v} (it should be the only module in this design). This should automatically create a test fixture template for you. 
+%
+For simulation purposes, it will be easier to reduce $N$ to a small number, such as eight. To do this, we are going to override the default parameter we gave to the ClockDivider module. This can be done like assigning ports: use a dot followed by the parameter name with the value you want to pass in enclosed parentheses. Now instead of having a value of 25 million, it will simulate with a value of 8 so that we do not have to simulate millions of clock cycles to verify the design. Parameters are a nice way to configure modules. The value 8 is only used in simulation. When we implement the design on the board, it will remain at 25 million. If we did not use the parameter altogether, then you would have to remember to comment out the existing value in the \texttt{ClockDivider.v} module and replace it with a smaller value. Then when you are ready to implement the design, you would have to remember to switch which lines were previously commented out. If you forgot to do so, the LED would appear to be always on, as it is blinking too fast. 
+
+% \begin{lstlisting}
+% 	always @(posedge clkin) begin
+% 		//if (count == 25'd25_000_000) begin
+% 		if (count == 25'd8) begin
+% 			count <= 0;
+% \end{lstlisting}
+Save the file, then click on \textbf{Add Sources}, select \textbf{Add Simulation Sources} and follow the procedures for making a simulation testbench.
+Open your new testbench file. You now need to setup the input clock. The easiest way is to define an infinite loop using the \texttt{forever} keyword in an \texttt{initial} block:
+
+\begin{lstlisting}
+module testbench(
+);
+    reg clk;
+    wire slow_clk;
+    
+    // Instantiate the module to be tested.
+    // Here we demonstrate named port connections
+    // as an alternative to ordered port connections:
+    // Also, the parameter is given a value of 8 instead
+    // of 25 million
+    ClockDivider #(.PRESCALER(8)) DUT(
+        .clkin(clk), 
+        .clkout(slow_clk)
+        );
+    
+    // initialize input signals
+	initial begin
+		clk = 0;
+	end
+	
+	// generate the clock signal, toggle at 10 ns intervals
+	always #10 clk = ~clk;
+
+endmodule
+\end{lstlisting}
+Save your testbench file and run a behavioral simulation as we did before. In the waveform viewer, click the zoom-to-fit icon to see your simulation range. It should like this:
+
+\begin{center}
+	\includegraphics[width=0.9\textwidth]{images/Vivado_clock_divider.png}
+\end{center}
+Now verify that \texttt{slow\_clk} flips every nine cycles of \texttt{clk}. (just like arrays counting starts at zero. For this reason you will see nine rising clock edges not eight)
+
+
+\subsection{Implement}
+
+Now we need to configure the \textbf{Constraint File} for implementation. You should have already added \textbf{Basys3\_Master.xdc} as a constraint to your project; if not, do so now. Open the constraint file. We will need to find lines that define the system clock, named \textbf{clk} in the default configuration. We will also need to associate \texttt{LED[0]} with \texttt{clkout}. Your completed constraint file should look like this:
+\begin{lstlisting}[basicstyle=\small,language=xdc]
+## Clock signal
+set_property PACKAGE_PIN W5 [get_ports clkin]							
+    set_property IOSTANDARD LVCMOS33 [get_ports clkin]
+create_clock -add -name sys_clk_pin -period 10.00 -waveform {0 5} [get_ports clkin]
+
+##LEDs
+set_property PACKAGE_PIN U16 [get_ports {clkout}]					
+    set_property IOSTANDARD LVCMOS33 [get_ports {clkout}]	
+\end{lstlisting}
+You must be very careful to ensure that the names referenced with the
+\texttt{get\_ports} keyword match precisely with the signal names in
+your design. Once your constraint is complete, run Synthesis,
+Implementation and Generate Bitstream. Program your device and verify
+that the LED blinks about twice per second. 
+%\textbf{Demonstrate your result to the TA.} You may need to program the Flash and carry your board to the TA in order to check it off.
+
+\textbf{TA PASS OFF: Demonstrate your simulation and implementation results to your TA}
+
+% \section{Using Block Designs}
+% In addition to Verilog designs, Vivado supports building schematics using what are called Block Designs. A block design is the preferred way to integrate IP into your project, and you can fairly easily combine block designs with custom Verilog code (the top level of the design is always Verilog; block designs may comprise a sub-hierarchy).
+
+% Start by creating a new project. Call it \textbf{ClockDividerBlock}. Don't create any design sources, but do add the constraint file as before. Once your project is ready, look for the \textbf{IP Integrator} heading in the Flow Navigator and click \textbf{Create Block Design}. It will open the block design editor:
+% \begin{center}
+%     \includegraphics[width=6in]{images/Vivado_block_design_editor.png}
+% \end{center}
+% To implement the clock divider, we need just one type of IP, the \textbf{Binary Counter}, which is an IP implementation of the \texttt{count} signal that we created in our Verilog design. Use the \textbf{Add IP} icon to bring up a list of available IP blocks, and search for ``binary counter.'' Select it and press Enter. It will place a module block in the editor. Double-click the module to customize its settings. Change the \textbf{Output Width} to 25 bits. You want to enable two checkboxes: \textbf{Restrict Count} and \textbf{Sync Threshold Output}. Then in both fields, you need to enter the \textbf{hexadecimal equivalent of 25$\times 10^6$.} 
+% \begin{center}
+%     \includegraphics[width=6in]{images/Vivado_binary_counter.png}
+% \end{center}
+
+% \newpage
+% Notice the \textbf{Threshold} output from the binary counter. This signal will sit at zero most of the time, but when the count reaches the threshold value it will flip to 1. Since the threshold value is the same as the counter's maximum value, it will occur only once and then the counter is reset back to zero. With each clock cycle, it will count back up from zero until it hits the threshold again, then the threshold output will pulse at 1 for one clock cycle before dropping back to 0.
+
+% Once your binary counter is customized, place {\em another} binary counter in the design and double-click to customize it. This time, set the output width to 1 -- this will be a one-bit ``counter'' that just toggles back and forth between 1 and 0. If the ``clk'' input for counter 2 is connected to the threshold output from counter 1, then the 1-bit output will toggle every time counter 1 reaches its threshold.
+
+% To complete the design, right click somewhere in the editor screen, and select \textbf{Create Port} from the drop-down menu. Create an input port called \texttt{clkin} and an output port called \texttt{clkout}. Then simply click the ports and I/O pins to create the connections shown below:
+% \begin{center}
+%     \includegraphics[width=6in]{images/Vivado_clock_divider_block_design.png}
+% \end{center}
+% When you are finished, save the block design and then click on the \textbf{Project Manager} header in the Flow Navigator to return to the Project Manager view. In the source browser you should see your block design, shown with a new icon that looks like a stack of gold bars:
+% \begin{center}
+%     \includegraphics[width=4in]{images/Vivado_block_design_browser.png}
+% \end{center}
+% Right click on the block design, and select \textbf{Create HDL Wrapper}. Leave the default setting in the popup window and click OK. This will create a Verilog ``wrapper'' module that lets your block design interface with the design hierarchy. Once this is done, you can use the same Constraint settings that you used for the Verilog version of the \texttt{ClockDivider} module.
+
+% After completing your constraint settings, click \textbf{Generate Bistream} and follow the prompts to step through synthesis and implementation. After the bitstream is generated successfully, program your device and demonstrate it to your TA so it can be checked off.
+
+\section{Seven Segment Displays}\label{sec:7segDesign}
+
+\textbf{Thoroughly read this section before starting to write verilog. You will use the code provided to build the needed modules}
+
+In Example 2.15 of the textbook, you are asked to consider the
+relationship between a binary-coded decimal (BCD) number and the
+corresponding lights on a seven-segment display. The BCD digits are
+labeled $x_3$, $x_2$, $x_1$ and $x_0$ (with $x_3$ as the most
+significant bit), representing a number between 0 and 9. The display's
+individual segments are labeled $a$, $b$, $\dots$, $g$, with each
+signal corresponding to one illuminated edge in the display. The above truth table is used for a standard display. 
+
+There are a few different ways to model a truth table in Verilog. In each method, we will use an \textbf{always block} 
+\begin{lstlisting}
+	always @(*) begin
+		...
+	end
+\end{lstlisting}
+In this syntax, the \texttt{@(*)} syntax declares implicit sensitivity. It literally means ``execute the code in this block whenever {\em any} of the referenced signals change.'' This type of sensitivity list is appropriate for \textbf{combinational logic}, and in this type of block we should usually use \textbf{blocking assignment} statements.
+
+Within the always block, to define a truth table we need to explicitly define the outputs for every single pattern of inputs. There are several different syntax methods available to us; the most common methods are \textbf{if-else} and \textbf{case} statements:
+\begin{enumerate}
+	\item \textbf{If-Else}: A C-style `==' is used to detect \textbf{logical equality}\\
+	\begin{lstlisting}
+	if (~x3 & ~x2 & ~ x1 & ~x0) begin
+		a = 1; b=1; c=1; d=1; e=1; f=1; g=0;
+	end
+	else if (~x3 & ~x2 & ~ x1 & x0) begin
+		a = 0; b=1; c=1; d=0; e=0; f=0; g=0;
+	end
+	//... and so on ...
+	// be sure to provide a generic "else" to catch any
+	// invalid or unexpected input patterns:
+	else begin
+		a = 0; b=0; c=0; d=0; e=0; f=0; g=0;		
+	end
+	\end{lstlisting}
+	\item \textbf{Compact If-Else}: before the always block, define bit vectors for the input and output signals:
+	\begin{lstlisting}
+	wire [3:0] N = {x3,x2,x1,x0}; // Pack inputs into one signal
+	\end{lstlisting}
+	Then in the always block, you don't need to type as much:
+		\begin{lstlisting}
+	if (N==4'b0000) begin
+		a = 1; b=1; c=1; d=1; e=1; f=1; g=0;
+	end
+	else if (N==4'b0001) begin
+		a = 0; b=1; c=1; d=0; e=0; f=0; g=0;
+	end
+	//... and so on ...
+	else begin
+		a = 0; b=0; c=0; d=0; e=0; f=0; g=0;		
+	end
+	\end{lstlisting}
+	\item You can also create a compact signal for the output: 
+			\begin{lstlisting}
+wire [3:0] N = {x3,x2,x1,x0}; // Pack inputs into a single signal
+reg  [6:0] D;
+assign a = D[6];
+assign b = D[5];
+assign c = D[4];
+assign d = D[3];
+assign e = D[2];
+assign f = D[1];
+assign g = D[0];
+
+always @(*) begin
+	if (N==4'b0000) begin
+		D = 7'b1111110;
+	end
+	else if (N==4'b0001) begin
+		D = 7'b0110000;
+	end
+	//... and so on ...
+	else begin
+		D=0;
+	end
+end
+	\end{lstlisting}
+	\item \textbf{Compact Case} statement: the most efficient way to encode a truth table is with a case statement: 
+	\begin{lstlisting}
+    always @(*) begin
+		case (N)
+			4'b0000: D = 7'b1111110;
+			4'b0001: D = 7'b0110000;
+			4'b0010: D = 7'b1101101;
+			4'b0011: D = 7'b1111001;
+			4'b0100: D = 7'b0110011;
+			4'b0101: D = 7'b1011011;
+			4'b0110: D = 7'b1011111;
+			4'b0111: D = 7'b1110000;
+			4'b1000: D = 7'b1111111;
+			4'b1001: D = 7'b1111011;
+			// Always provide a "default" case to catch
+			// unexpected or invalid inputs:
+			default: D = 7'b0000000;
+		endcase
+	end
+
+	\end{lstlisting}
+	
+	\item \textbf{Boolean Expressions}: instead of entering the truth table contents (which can become very complex when many inputs are used), you can enter Boolean expressions for the output signals. The basic syntax is:
+	
+	\begin{center}
+		\begin{tabular}{cc|cc}
+		\multicolumn{2}{c}{Bitwise Operators} & \multicolumn{2}{c}{Logic Operators} \\
+		Symbol & Operation & Symbol & Operation\\
+		\hline
+		\texttt{\&} & AND & \texttt{\&\&} & AND\\
+		\texttt{$\sim$} & NOT & \texttt{!} & NOT\\
+		\texttt{|} & OR & \texttt{|}\texttt{|} & OR\\
+		\texttt{$^\wedge$} & XOR
+	\end{tabular}
+	\end{center}
+
+As a general rule, the \textbf{bitwise operators are used for Boolean expressions}, whereas the \textbf{logic operators are used for if/then expressions or other conditionals.}
+	Using this method, the Boolean expressions from your pre-lab assignment can be entered directly into the always block:
+	\begin{lstlisting}
+	a = x3  |  x1  | x2&x0  | ~x2&~x0;
+	b = ~x2 | x1&x0  | ~x1&~x0;
+	c = x3 | x2 | ~x1 | x0;
+	d = // Provide your solutions to d, e, and f
+	e = //
+	f = //
+	g = x1&~x0 | x2&~x1 | x3 | ~x2&x1;
+	\end{lstlisting}
+	% e = ~x2&~x0 | x1&~x0;
+	% f = x3 | ~x1&~x0 | x2&~x0 | x2&~x1;
+
+	\item \textbf{Assign statements}: in a purely combinational design defined by Boolean expressions, you don't need to use an always block at all. You can instead use \texttt{assign} statements:
+	\begin{lstlisting}
+	assign a = x3  | x1 | x2&x0 | ~x2&~x0;
+	assign b = ~x2 | x1&x0  | ~x1&~x0;
+	assign c = x3 | x2 | ~x1 | x0;
+	assign d = // Provide your solutions to d, e, and f
+	assign e = //
+	assign f = //
+	assign g = x1&~x0 | x2&~x1 | x3 | ~x2&x1;
+	\end{lstlisting}
+	\textbf{Note:} any signal that is assigned within an always block should be declared as a \textbf{reg} or \textbf{output reg} type, whereas any signal defined by an assign statement should be declared as a \textbf{wire} or \textbf{output} type (output ports are considered wires by default unless declared as reg type).
+\end{enumerate}
+
+\section{Demonstration Design}\label{sec5:Design}
+Now create a project in Vivado and define three Verilog modules:
+\begin{enumerate}
+	\item \textbf{SevenSegmentTruthTable.v} (see section 4, part 4: Compact Case Statement for stater code, don't forget to include the top portion of 4.3)
+	\item  \textbf{SevenSegmentCombinational.v} (see section 4, part 6: Assign Statements for stater code)
+	\item  \textbf{SevenSegmentTop.v}
+\end{enumerate}
+In the TruthTable and Combinational designs, you should specify the following I/O signals:
+\begin{itemize}
+	\item inputs \texttt{x3, x2, x1, x0}
+	\item outputs \texttt{a, b, c, d, e, f, g}
+\end{itemize}
+\textbf{Complete the Verilog code for the TruthTable and Combinational
+  modules using the methods described in the Section~\ref{sec:7segDesign}.} Specifically, use the Compact Case Statements for the truth table, and use Boolean expressions for the combinational assignments.
+
+In the Top module, you should specify these I/Os:
+\begin{itemize}
+		\item \texttt{input [7:0] sw}
+		\item \texttt{output [3:0] an}
+		\item \texttt{output [6:0] seg}
+\end{itemize}
+
+Having a hard time remembering what the port names were in another module? You can split the source windows by right-clicking the tabs then select \texttt{Split Vertically}. This makes it much easier to type out the ports for a submodule without having to go back and forth between the two modules.
+\begin{center}
+	\includegraphics[width=\textwidth]{images/Vivado_split_screen.png}
+\end{center}
+On the Basys 3 boards, the seven segment signals are \textbf{active low}, meaning `0' is ON and `1' is OFF. See the following schematic for why that is. To illuminate a segment, the anode should be driven high while the cathode is driven low. However, since the
+Basys 3 uses transistors to drive enough current into the common anode point, the anode enables are inverted.
+Therefore, both the AN0..3 and the CA..G/DP signals are driven low when active.
+
+\begin{center}
+	\includegraphics[width=\textwidth]{images/basys_3_7_seg}
+\end{center}
+We therefore need to invert the signal coming from your module. Additionally, the four \texttt{an} signal bits (also active low) determine which of the seven segment display digits are activated -- only one digit can be displayed at a time. For now, we will assign the \texttt{an} bits directly via switches 4 through 7 on the board. We will assign the \texttt{x3, x2, x1, x0} bits from the four right-most switches (0 through 3) on the board. Putting it all together, the Top module should look like this:
+\begin{lstlisting}
+module SevenSegmentTop(
+	output [6:0] seg,
+	output [3:0] an,
+	input [7:0] sw
+    );
+
+	wire [6:0] D;
+	
+	assign seg = ~D;
+	assign an  = ~sw[7:4];
+	
+//	SevenSegmentTruthTable S1(
+	SevenSegmentCombinational S1(
+		.x3(sw[3]),
+     .x2(sw[2]),
+     .x1(sw[1]),
+     .x0(sw[0]),
+     .a(D[0]),
+     .b(D[1]),
+     .c(D[2]),
+     .d(D[3]),
+     .e(D[4]),
+     .f(D[5]),
+	  .g(D[6])
+    );
+endmodule
+ \end{lstlisting}
+Notice that both the TruthTable and Combinational versions of the
+module are referenced. We will test both versions of the design. We can simply change the line comments to switch which version we want to use.
+\\\textbf{A useful tip:} the hierarchy tree in the source window is very helpful for ensuring that submodules are in the correct place. In the following screenshot, we purposely made a mistake and misspelled the \texttt{SevenSegmentTruthTable.v} module in the top module. Notice how in the source window that the module shows up red with a question mark. This means that either the module does not exist or, more likely, you have made a typo in the top module. Once the typo has been fixed, they will show up blue under the module that they are instantiated in.\\
+\begin{center}
+	\includegraphics[width=0.75\textwidth]{images/hierarchy_error.png}
+\end{center}
+
+Next, to verify your design, create a new Verilog testbench module and instantiate your Top module as the Design Under Test. In this test, you will create a new \texttt{reg} signal named \texttt{clk}, and use it to trigger an always block that sweeps the \texttt{sw} signal from integer value zero, up to nine, and then back to zero. 
+
+\begin{lstlisting}
+module SevenSegmentTest;
+
+	// Inputs
+	reg [7:0] sw;
+	reg       clk;
+	
+	// Outputs
+	wire [6:0] seg;
+	wire [3:0] an;
+
+	// Instantiate the Design Under Test (DUT)
+	SevenSegmentTop DUT (
+		.seg(seg), 
+		.an(an), 
+		.sw(sw)
+	);
+
+	initial begin
+		// Initialize Inputs
+		sw = 0;
+		clk = 0;
+		
+		// Wait 100 ns for global reset to finish
+		#100;
+	end
+	
+	// generate the clock signal, toggle at 10 ns intervals
+	always #10 clk = ~clk;
+	
+	// make the switches increment every clock period
+	always @(posedge clk) begin
+		if (sw >= 9)
+			sw <= 0;
+		else
+			sw <= sw + 1;
+	end
+      
+endmodule
+\end{lstlisting}
+When your testbench module is ready, launch the simulation and zoom in so that you can see individual clock cycles. Click on the \texttt{seg} signal to expand its bits, and notice that they are both inverted and in reverse order (\texttt{g} down to \texttt{a}). Verify the first couple of truth table rows by inspecting the bits values. Since you have a lot of bits packed into the \texttt{seg} and \texttt{sw} signals, it will be helpful to represent them as integer numbers. To do this, \textbf{right-click on the signal's name in the waveform viewer, and select Radix$\rightarrow$Unsigned Decimal,} like this:
+\begin{center}
+	\includegraphics[width=\textwidth]{images/Vivado_simulation_radix.png}
+\end{center}
+
+Once you have changed the radix, you should see the signal values reported as numbers. The \texttt{sw} signal should increment as 0, 1, 2, $\dots$ 9 and then roll back to 0. The correct sequence for the \texttt{seg} signal should be 64, 121, 36, 48, 25, 18, 2, 120, 0, 16, and then back to 64. It is much easier to verify the integer sequence than to examine all the bits at all times, however if your design doesn't match the expected sequence, you will have to take a close look at the individual bits.
+\begin{center}
+	\includegraphics[width=\textwidth]{images/WaveformForSevenSeg}
+\end{center}
+
+\textbf{Repeat this verification for both the TruthTable and Combinational versions of your design.} Once the design is verified, proceed to program your Basys board and test the function on the physical device. You will need to define the pin mappings with an XDC constraints file. You can import the Master XDC file into your project and uncomment the lines corresponding to the switches and the seven-segment display. \textbf{Make sure that the names used in the ``\texttt{get\_ports}'' statements match the actual port names used in your top-level module}.
+
+\subsection{What Does the Constraints File Do?}
+The constraints file tells Vivado where to take the inputs/ouputs of your module to connect them to a physical pin on the board. The pins on the board are connected to things like LEDs, buttons, and switches. Without this file, Vivado will not know where you want the signal \texttt{sw} (for example) to connect to. Just because the name is \texttt{sw} doesn't mean Vivado will know to connect it to a switch. See the image below for a visual representation. Note that the name in the constraints file (orange box) must match the names in the top level module (green box).
+\begin{center}
+	\includegraphics[width=0.75\textwidth]{images/constraint_relation_to_top_module.png}
+\end{center}
+The end result should look something like this:
+\begin{lstlisting}[language=xdc]
+## Switches
+set_property PACKAGE_PIN V17 [get_ports {sw[0]}]
+    set_property IOSTANDARD LVCMOS33 [get_ports {sw[0]}]
+set_property PACKAGE_PIN V16 [get_ports {sw[1]}]	
+    set_property IOSTANDARD LVCMOS33 [get_ports {sw[1]}]
+set_property PACKAGE_PIN W16 [get_ports {sw[2]}]			
+    set_property IOSTANDARD LVCMOS33 [get_ports {sw[2]}]
+set_property PACKAGE_PIN W17 [get_ports {sw[3]}]			
+    set_property IOSTANDARD LVCMOS33 [get_ports {sw[3]}]
+set_property PACKAGE_PIN W15 [get_ports {sw[4]}]			
+    set_property IOSTANDARD LVCMOS33 [get_ports {sw[4]}]
+set_property PACKAGE_PIN V15 [get_ports {sw[5]}]			
+    set_property IOSTANDARD LVCMOS33 [get_ports {sw[5]}]
+set_property PACKAGE_PIN W14 [get_ports {sw[6]}]			
+    set_property IOSTANDARD LVCMOS33 [get_ports {sw[6]}]
+set_property PACKAGE_PIN W13 [get_ports {sw[7]}]			
+    set_property IOSTANDARD LVCMOS33 [get_ports {sw[7]}]
+	
+
+# 7 segment display
+set_property PACKAGE_PIN W7 [get_ports {seg[0]}]			
+    set_property IOSTANDARD LVCMOS33 [get_ports {seg[0]}]
+set_property PACKAGE_PIN W6 [get_ports {seg[1]}]			
+    set_property IOSTANDARD LVCMOS33 [get_ports {seg[1]}]
+set_property PACKAGE_PIN U8 [get_ports {seg[2]}]			
+    set_property IOSTANDARD LVCMOS33 [get_ports {seg[2]}]
+set_property PACKAGE_PIN V8 [get_ports {seg[3]}]			
+    set_property IOSTANDARD LVCMOS33 [get_ports {seg[3]}]
+set_property PACKAGE_PIN U5 [get_ports {seg[4]}]			
+    set_property IOSTANDARD LVCMOS33 [get_ports {seg[4]}]
+set_property PACKAGE_PIN V5 [get_ports {seg[5]}]			
+    set_property IOSTANDARD LVCMOS33 [get_ports {seg[5]}]
+set_property PACKAGE_PIN U7 [get_ports {seg[6]}]			
+    set_property IOSTANDARD LVCMOS33 [get_ports {seg[6]}]
+	
+
+# Anode pins for 7-segment display:	
+set_property PACKAGE_PIN U2 [get_ports {an[0]}]				
+    set_property IOSTANDARD LVCMOS33 [get_ports {an[0]}]
+set_property PACKAGE_PIN U4 [get_ports {an[1]}]				
+    set_property IOSTANDARD LVCMOS33 [get_ports {an[1]}]
+set_property PACKAGE_PIN V4 [get_ports {an[2]}]				
+    set_property IOSTANDARD LVCMOS33 [get_ports {an[2]}]
+set_property PACKAGE_PIN W4 [get_ports {an[3]}]				
+    set_property IOSTANDARD LVCMOS33 [get_ports {an[3]}]
+\end{lstlisting}
+
+\textbf{A useful tip:} in Verilog files or constraint files there is a fast way to comment in or out lines of code or find and replace variable names. By highlighting a group of text then right-clicking, a menu pops up with options to toggle line comments or find and replace. This menu also shows what the keyboard shortcuts are for the commands. When using the replace tool, its best to choose the \texttt{Selected text} option under \texttt{Target}, just as a safety so other parts of the file aren't changed accidentally. This saves a lot of time when renaming variables or commenting code in/out rather than doing it one line at a time.
+
+\begin{center}
+	\includegraphics[width=\textwidth]{images/vivado_find_replace.png}
+\end{center}
+
+\textbf{Note:} if your design fails in implementation or in the bit stream generation stage, this is most likely due to an error or typo in the constraints file. It may be tempting to fix the error then just rerun the build process, but this can be very time consuming if you run into yet another error/typo, as the building process takes anywhere from 5 to 15 minutes to complete. There is a faster way to get feedback from Vivado to verify if the constraints file is error free. This can be done by opening up the RTL design schematic, found by clicking the \texttt{RTL ANALYSIS} drop down on the far left column of Vivado then clicking the drop down for \texttt{Open Elaborated design} drop down. Here you will find a \texttt{Schematic} option, click on it and it should open up a block diagram representation of your design. Upon opening the schematic Vivado performs a check on your constraints file. If you have errors in your constraints file, Vivado will pop-up a window to show this or the errors will be in the message tab. If you make changes to the constraints file, a yellow ribbon will appear near the top that says \texttt{reload}. By clicking it, the constraints file check will be performed again. Running RTL analysis is much faster to report back problems than waiting for synthesis and implementation to run just to fail and report back an error.
+
+\textbf{TA PASS OFF: Show the TA your simulation and implementation results for your SevenSegmentCombinational and SevenSegmentTruthTable modules.}
+
+\section{Dealing with Invalid Inputs}
+In your pre-lab, you obtained minimized Boolean expressions only for input values that represent valid BCD digits (i.e.\ values 0 through 9). But ``in the wild'', your design could conceivably encounter inputs for values 10 through 15. To see what happens, program your board with the Combinational version and give it some input values greater than 9. The results should look wrong, and case 11 looks like gibberish.  
+
+In the TruthTable version of the design, a \textbf{default} case is used to disable all of the segments when the input isn't valid. Our combinational design doesn't have such a feature, but there are several ways we could screen for invalid input combinations. We could add more terms to the Boolean expressions within the Combinational module, or we could add that logic at a higher level of hierarchy in the Top module. The hierarchical method turns out to be pretty easy if we \textbf{implement the \texttt{NAN} logic that you solved in the pre-lab}. We can implement this function in just two lines:
+
+\begin{lstlisting}
+	wire    NAN = // INSERT YOUR SOLUTION HERE
+	assign seg  = ~(D&~{7{NAN}});
+\end{lstlisting}
+
+Note that since we are working in the Top module, your logic solution for \texttt{NAN} will need to reference signals \texttt{sw[3]} instead of \texttt{w}, \texttt{sw[2]} instead of \texttt{x2}, and so on. In the second line, we make use of Verilog's \textbf{concatenation} and \textbf{repetition} syntax, which is useful for performing \textbf{bit-wise operations} across all the bits in a vector:
+\begin{lstlisting}[basicstyle=\ttfamily\small]
+ {7{NAN}}       // This means repeat NAN seven times
+
+ ~{7{NAN}}      // This means negate seven copies of NAN
+
+ D&~{7{NAN}}     // This means {D[6]&~NAN,D[5]&~NAN,...,D[0]&~NAN}
+
+ ~(D&~{7{NAN}})  // This means {~(D[6]&~NAN),~(D[5]&~NAN),...,~(D[0]&~NAN)}
+\end{lstlisting}
+Since \texttt{D} has seven bits, but \texttt{NAN} is only a one-bit signal, \textbf{we need to repeat \texttt{NAN} seven times} in order to do a bitwise operation. What do you think would happen if you tried to do this:
+\begin{lstlisting}
+	~(D&~NAN) // Bad code!
+\end{lstlisting}
+In this case, Verilog will automatically expand \texttt{NAN} into a seven-bit vector, but the default behavior is to \textbf{pad with zeros} from the left side. So if \texttt{NAN} equals 1, you will get
+\begin{lstlisting}
+	~(D&~NAN) // expands to ~(D&{0,0,0,0,0,0,1}) REALLY BAD
+\end{lstlisting}
+For this reason, you need to be explicit and tell Verilog that you intend to produce seven copies of \texttt{NAN}.
+
+If you do this properly and implement the function on your board, \textbf{you should see the segment displays switch off when the input is greater than 9. Demonstrate this to your TA.}
+
+\textbf{TA PASS OFF: Demonstrate the functional SevenSegmentCombinational module with NAN to your TA.}
+
+\section{Modify BCD to Build Hexadecimal Seven-Segment Decoder}
+Update your SevenSegmentTruthTable module to implement a \textbf{hexadecimal}
+seven-segment decoder, showing digits \texttt{A} through \texttt{F}
+with \texttt{b} and \texttt{d} as lower case. Update your testbench to get results for values from 0-15. Demonstrate the working hexadecimal decoder FPGA implementation to your TA.
+
+\textbf{TA PASS OFF: Correct demonstration of hexadecimal decoder on the Basys3 board}
+
+%Save a separate copy of all your BCD seven-segment decoder. You may modify your BCD decoder to implement a \textbf{hexadecimal} seven-segment decoder, showing digits \texttt{A} through \texttt{F} with \texttt{b} and \texttt{d} as lower case. You are required to use either the ``compact case statement'' or ``assign statements'' methods described in Section~\ref{sec:7segDesign}. \textbf{Demonstrate the working hexadecimal decoder FPGA implementation to your TA.}
+
+
+\section{TA Checkoff}
+\begin{itemize}
+\item (30 points) Complete pre-lab work and Lab 2 Quiz prior to start of the lab
+\item (10 points) Correct simulation and FPGA implementation of the
+  clock divider. 
+\item (10 points) Correct simulation of the TruthTable module.
+\item (10 points) Correct simulation of the Combinational module.
+\item (20 points) Correct demonstration of \textbf{both modules} on the Basys board.
+\item (20 points) Correct solution and demonstration of the
+  Combinational module with \texttt{NAN} detection.
+\item (20 points) Correct demonstration of hexadecimal decoder on the Basys board.
+\end{itemize}
+
+%\noindent {\bf Important: Please upload your .v files and .ucf file on
+%  Canvas. Failure to do so will result in a zero for this assignment.}
+
+% \newpage
+
+\section{Extra Practice Problems}
+
+\begin{itemize}
+    \item Try connecting the clock divider to a 4-bit counter which is then connected to the seven segment display so it auto increments instead of using switches.
+    \item Research activity: See if you can understand the \textbf{double-dabble algorithm} used to convert binary numbers to BCD representations. You will need to do some web research for this.
+    \item If you're feeling really enterprising, try implementing the double-dabble algorithm in Verilog, and verify your implementation via simulation.
+\end{itemize}
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

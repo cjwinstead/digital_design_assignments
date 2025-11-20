@@ -1,0 +1,225 @@
+\section{Pre-lab 5}
+\subsection{Part 1}
+\begin{enumerate}
+    \noindent \begin{minipage}{\textwidth}
+        \item RS latch, 1 unit delay \par \bigskip
+        \begin{tikztimingtable}[
+            timing/dslope =0.1 , timing/.style={x=1.6ex ,y=6ex }, x = 3.2 ex ,
+            timing/rowdist =8ex ,
+            timing/name/.style ={ font =\sffamily \scriptsize },
+        ]
+            {$S$} & 6L 6C 20C 6C 18C \\
+            {$R$} & 18L 6C 8C 6C 18C \\
+            {$Q$} & 10L 10C 20C 8{2C}\\
+            {$Q\prime$} & 8H 14C 12C 6C 8{2C}\\
+            \extracode
+            \begin{pgfonlayer}{background}
+                \begin{scope}[gray,semitransparent,semithick]
+                    \horlines {}
+                    \foreach \x in {0,1,...,28} {
+                        \draw (\x,4) -- (\x,-15);
+                    };
+                \end{scope}
+            \end{pgfonlayer}
+        \end{tikztimingtable}
+    \end{minipage}
+    \noindent \begin{minipage}{\textwidth}
+        \item RS latch, staggered delay \par \bigskip
+        \begin{tikztimingtable}[
+            timing/dslope =0.1 , timing/.style={x=1.6ex ,y=6ex }, x = 3.2 ex ,
+            timing/rowdist =8ex ,
+            timing/name/.style ={ font =\sffamily \scriptsize },
+        ]
+            {$S$} & 6L 6C 20C 6C 18C \\
+            {$R$} & 18L 6C 8C 6C 18C \\
+            {$Q$} & 12L 10C 20C 2{2C 4C} 2C\\
+            {$Q\prime$} & 8H 16C 10C 6C 2{4C 2C} 4C\\
+            \extracode
+            \begin{pgfonlayer}{background}
+                \begin{scope}[gray,semitransparent,semithick]
+                    \horlines {}
+                    \foreach \x in {0,1,...,28} {
+                        \draw (\x,4) -- (\x,-15);
+                    };
+                \end{scope}
+            \end{pgfonlayer}
+        \end{tikztimingtable}
+    \end{minipage}
+    \noindent \begin{minipage}{\textwidth}
+        \item Clock enabled, no delay \par \bigskip
+        \begin{tikztimingtable}[
+            timing/dslope =0.1 , timing/.style={x=2ex ,y=6ex }, x =4 ex ,
+            timing/rowdist =8ex ,
+            timing/name/.style ={ font =\sffamily \scriptsize },
+         ]
+          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %
+          {$S$} & 4L 10{4C}  \\
+          {$R$} & 8.0L 9{4C} \\
+          {\texttt{clk}} & 2L 2C 2C 4C 2C 2C 4C 2C 2C 4C 2C 2C 4C 2C 2C 4C 2C \\
+          {$Q$} & 6L 2{2C 4C 6C 4C} 2C 4C\\
+          {$Q^\prime$} & 6H 2{2C 4C 6C 4C} 2C 4C\\
+          \extracode
+          \begin{pgfonlayer}{background}
+            \begin{scope}[gray,semitransparent,semithick]
+              \horlines {}
+              \foreach \x in {0,1,...,22} {
+                \draw (\x,4) -- (\x,-20);
+              };
+            \end{scope}
+          \end{pgfonlayer}
+        \end{tikztimingtable}
+    \end{minipage}
+    \noindent \begin{minipage}{\textwidth}
+        \item RS flip-flop, no delay \par \bigskip
+        \begin{tikztimingtable}[
+            timing/dslope =0.1 , timing/.style={x=2ex ,y=6ex }, x =4 ex ,
+            timing/rowdist =8ex ,
+            timing/name/.style ={ font =\sffamily \scriptsize },
+         ]
+          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %
+          {$S$} & 4L 10{4C}  \\
+          {$R$} & 8.0L 9{4C} \\
+          {\texttt{clk}} & 2L 5{2C 2C 4C} 2C \\
+          {$Q_1$} & 6L 2{2C 4C 6C 4C} 2C 4C \\
+          {$Q_1^\prime$} & 6H 2{2C 4C 6C 4C} 2C 4C \\
+          {$Q$} & 14L 6C 10C 6C 8C \\
+          {$Q^\prime$} & 14H 6C 10C 6C 8C\\
+          \extracode
+          \begin{pgfonlayer}{background}
+            \begin{scope}[gray,semitransparent,semithick]
+              \horlines {}
+              \foreach \x in {0,1,...,22} {
+                \draw (\x,4) -- (\x,-30);
+              };
+            \end{scope}
+          \end{pgfonlayer}
+        \end{tikztimingtable}
+    \end{minipage}
+    \noindent \begin{minipage}{\textwidth}
+        \item D flip-flop schematic \par \bigskip
+        \begin{circuitikz}
+            \draw (2,0)coordinate (A)--(5,0)coordinate (B)--(5,4)coordinate (C)--(2,4)coordinate (D)--cycle;
+            \draw ($(A)!0.25!(D)$)node[right] {$R$}--++(180:1)--++(90:0.25)node[ieeestd not port, anchor=out, rotate=270] (not){};
+            \draw ($(A)!0.75!(D)$)node[right] {$S$}--++(180:1)node[circ] {}--++(180:1)node[left] {$D$};
+            \draw ($(B)!0.25!(C)$)node[left] {$Q^\prime$}--++(0:1);
+            \draw ($(B)!0.75!(C)$)node[left] {$Q$}--++(0:1);
+            \draw ($(C)!0.5!(D)$)node[below] {\texttt{clk}}--++(90:0.5);
+        \end{circuitikz}
+    \end{minipage}
+
+
+\subsection{Part 2}
+
+    \noindent \begin{minipage}{\textwidth}
+        \item JK flip-flop schematic and timing \par \bigskip
+        \begin{circuitikz}
+            \draw (2,0)coordinate (A)--(5,0)coordinate (B)--(5,4)coordinate (C)--(2,4)coordinate (D)--cycle;
+            \draw ($(A)!0.25!(D)$);
+            \draw ($(A)!0.75!(D)$)node[right] {$D$}--++(180:1)node[ieeestd or port, anchor=out] (jkor) {};
+            \draw ($(B)!0.25!(C)$)node[left] (qprime) {$Q^\prime$}--++(0:1);
+            \draw ($(B)!0.75!(C)$)node[left] (q) {$Q$}--++(0:1);
+            \draw ($(C)!0.5!(D)$)node[below] {\texttt{clk}}--++(90:0.5);
+
+            \draw (jkor.in 1)--++(90:1)--++(180:1)node [ieeestd and port, anchor=out] (jand) {};
+            \draw (jkor.in 2)--++(270:1)--++(180:1)node [ieeestd and port, anchor=out] (kand) {};
+
+            \draw (jand.in 2) node[left] {$J$};
+            \draw (jand.in 1)--++(90:1)--++(0:10)coordinate (i)--(i|-qprime)node[circ] {};
+
+            \draw (kand.in 1)node[left] {$K$};
+            \draw [fill={rgb,255:red,255;green,255;blue,255}] (kand.in 1)++(0.27,0) circle (0.1);
+            \draw (kand.in 2)--++(270:3)--++(0:9.7)coordinate (j)--(j|-q)node[circ] {};
+        \end{circuitikz}\par\bigskip
+        \begin{tikztimingtable}[
+            timing/dslope =0.1 , timing/.style={x=2ex ,y=6ex }, x =4 ex ,
+            timing/rowdist =8ex ,
+            timing/name/.style ={ font =\sffamily \scriptsize },
+         ]
+          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %
+          {$J$} & 7L 4C 4C 4C 4C 8C 7C \\
+          {$K$} & 3L 4C 12C 12C 7C \\
+          {\texttt{clk}} & 4L 17{2C} \\
+          {$Q$} & 10L 12C 4C 4C 8C \\
+          {$Q^\prime$} & 10H 12C 4C 4C 8C \\
+          \extracode
+          \begin{pgfonlayer}{background}
+            \begin{scope}[gray,semitransparent,semithick]
+              \horlines {}
+              \foreach \x in {0,1,...,19} {
+                \draw (\x,4) -- (\x,-20);
+              };
+            \end{scope}
+          \end{pgfonlayer}
+        \end{tikztimingtable}
+    \end{minipage}
+    \noindent \begin{minipage}{\textwidth}
+        \item D register schematic \par \bigskip
+        \begin{circuitikz}
+            \draw (2,0)coordinate (A)--(5,0)coordinate (B)--(5,4)coordinate (C)--(2,4)coordinate (D)--cycle;
+            \draw ($(A)!0.25!(D)$);
+            \draw ($(A)!0.75!(D)$)node[right] (data) {$D$};
+            \draw ($(B)!0.25!(C)$)node[left] (qprime) {$Q^\prime$}--++(0:1);
+            \draw ($(B)!0.75!(C)$)node[left] (q) {$Q$}--++(0:1);
+            \draw ($(C)!0.5!(D)$)node[below] {\texttt{clk}}--++(90:0.5);
+
+            \draw (0,1.75)coordinate (A)--++(30:1)coordinate (B)--++(90:1.5)coordinate (C)--++(150:1)coordinate (D)--cycle;
+            \draw ($(B)!0.5!(C)$)--(data);
+            \draw ($(A)!0.5!(B)$)--++(270:1)node[below] {\texttt{rst}};
+            \draw ($(D)!0.25!(A)$)node[right] {$1$}--++(180:1)node[left] {$D_{0}$};
+            \draw ($(A)!0.25!(D)$)node[right] {$0$}--++(180:1)coordinate (U);
+            
+
+            \draw (-3,0)coordinate (A)--++(30:1)coordinate (B)--++(90:1.5)coordinate (C)--++(150:1)coordinate (D)--cycle;
+            \draw ($(C)!0.5!(D)$)--++(90:1)node[above] {\texttt{shift}};
+            \draw ($(D)!0.25!(A)$)node[right] {$1$}--++(180:1)node[left] {$D$};
+            \draw ($(A)!0.25!(D)$)node[right] {$0$}--++(180:1)--++(270:2)--++(0:9.5)coordinate (O)--(q-|O)node[circ] {};
+            \draw ($(B)!0.5!(C)$)coordinate (V)--(V-|U)--(U);
+            
+        \end{circuitikz}
+    \end{minipage}
+    \noindent \begin{minipage}{\textwidth}
+        \item JK flip-flop counter \par \bigskip
+        \begin{circuitikz}[scale=0.8, transform shape]
+            \draw (2,0)coordinate (A)--(5,0)coordinate (B)--(5,4)coordinate (C)--(2,4)coordinate (D)--cycle;
+            \draw ($(A)!0.75!(D)$)node[right] {$J$}--++(180:0.5)node[circ] (j0) {}--++(0:0)node[ieeestd and port, anchor=out] (incr0) {};
+            \draw ($(A)!0.25!(D)$)node[right] {$K$}--++(180:0.5)node[ieeestd or port, anchor=out] (rst0) {};
+            \draw ($(B)!0.25!(C)$)node[left] {$Q^\prime$};
+            \draw ($(B)!0.75!(C)$)node[left] {$Q$}--++(0:0.5)node[circ] (q0) {}--++(90:2);
+            \draw ($(C)!0.5!(D)$)node[below] {\texttt{clk}}--++(90:1);
+
+            \draw (incr0.in 1)--++(180:0.75)node[left] {\texttt{incr}};
+            \draw (rst0.in 2)--++(180:0.5)node[circ] (junc) {}--(incr0.in 2-|junc)--(incr0.in 2);
+            \draw [fill={rgb,255:red,255;green,255;blue,255}] (incr0.in 2)++(0.27,0) circle (0.1);]
+            \draw (junc)--++(180:0.25)node[left] {\texttt{rst}};
+            \draw (junc)--++(270:1.25)coordinate (r0);
+            \draw (j0)--++(270:1)coordinate (a)--(a-|rst0.in 1)--(rst0.in 1);
+
+            \draw (9,0)coordinate (A)--(12,0)coordinate (B)--(12,4)coordinate (C)--(9,4)coordinate (D)--cycle;
+            \draw ($(A)!0.75!(D)$)node[right] {$J$}--++(180:0.5)node[circ] (j1) {}--++(0:0)node[ieeestd and port, anchor=out] (incr1) {};
+            \draw ($(A)!0.25!(D)$)node[right] {$K$}--++(180:0.5)node[ieeestd or port, anchor=out] (rst1) {};
+            \draw ($(B)!0.25!(C)$)node[left] {$Q^\prime$};
+            \draw ($(B)!0.75!(C)$)node[left] {$Q$}--++(0:0.5)node[circ] (q1) {}--++(90:2);
+            \draw ($(C)!0.5!(D)$)node[below] {\texttt{clk}}--++(90:1);
+
+            \draw (r0)--(r0-|rst1.in 2)node[circ] (r1) {}--(rst1.in 2);
+            \draw (j1)--++(270:1)coordinate (a)--(a-|rst1.in 1)--(rst1.in 1);
+            \draw (q0)--(q0|-incr1.in 2)--(incr1.in 2);
+            \draw (j0)--++(90:1.5)coordinate (s0)--(s0-|incr1.in 1)--(incr1.in 1);
+
+            \draw (16,0)coordinate (A)--(19,0)coordinate (B)--(19,4)coordinate (C)--(16,4)coordinate (D)--cycle;
+            \draw ($(A)!0.75!(D)$)node[right] {$J$}--++(180:0.5)node[circ] (j2) {}--++(0:0)node[ieeestd and port, anchor=out] (incr2){};
+            \draw ($(A)!0.25!(D)$)node[right] {$K$}--++(180:0.5)node[ieeestd or port, anchor=out] (rst2) {};
+            \draw ($(B)!0.25!(C)$)node[left] {$Q^\prime$};
+            \draw ($(B)!0.75!(C)$)node[left] {$Q$}--++(0:0.5)--++(90:2);
+            \draw ($(C)!0.5!(D)$)node[below] {\texttt{clk}}--++(90:1);
+
+            \draw (r1)--(r1-|rst2.in 2)--(rst2.in 2);
+            \draw (j2)--++(270:1)coordinate (a)--(a-|rst2.in 1)--(rst2.in 1);
+            \draw (q1)--(q1|-incr2.in 2)--(incr2.in 2);
+            \draw (j1)--++(90:1.5)coordinate (s1)--(s1-|incr2.in 1)--(incr2.in 1);
+        \end{circuitikz}
+    \end{minipage}
+\end{enumerate}

@@ -1,0 +1,99 @@
+\section*{\centering Final Project (Milestone 2)}
+For the second milestone, you are required to check off project-specific items with your lab TA by its deadline.
+% \textbf{5:00PM on Thursday, April 19}. 
+You are required to complete the tasks below. Make sure you also refer to each project for its specific required items. 
+\begin{itemize}
+\item Revised high-level FSM or ASM chart, datapath design, and controller FSM. 
+\item Verilog implementation of all modules of your design with verified syntax check from Vivado. Refer to each project for its specific required modules. 
+\item Testbench for \textbf{all} modules and verification in the Vivado simulator.
+\item Be prepared to explain your Verilog description and simulation results in a clear and logical manner, and answer questions about your design from your lab TA at check-off.
+\item Once you complete the above items, demonstrate your implementation on the Basys3 board to your lab TA. 
+\item Pay attention to projects \ref{processor2} and \ref{colorPong2}
+% and \ref{lineWobbler} 
+for the requirements on board implementation.
+\end{itemize}
+
+
+\subsection*{Project-Specific Check-off Requirements}
+\setcounter{subsubsection}{0}
+\subsubsection{Simple ALU calculator}
+\begin{itemize}
+\item \textit{Controller FSM module}.
+\item \textit{Datapath modules}: Verilog description of \textbf{all} datapath components in your revised high-level design from the first milestone.
+\item \textit{Top-level module}: Top-level Verilog module describing connections between datapath components and controller. 
+\end{itemize}
+\subsubsection{Random number generator}%\label{random}
+\begin{itemize}
+\item \textit{LFSR module:}
+This module will be the maximum length 8-bit LFSR module that will have 8 shift registers with the XOR taps at the appropriate locations as per the maximum length polynomial.
+Create a testbench for this module which will display the appropriate Pseudo-Random number generated at every clock cycle.
+\item \textit{Display module:}
+This module should display the random number generated on the Seven Segment Display in Hexadecimal and must illuminate the LED's as per the Binary representation.
+Create a testbench for this module which will display the appropriate values for each of the Seven-Segment elements for Hexadecimal numbers 0-F.
+\item \textit{Top-level module:}
+This is the top-level module that will be the interface between the LFSR and the display module and will direct the LFSR module to take appropriate actions on the button presses for Load Seed and Increment.
+Create a testbench for this module which will test the entire functionality of the Pseudo-Random Number Generator. This module structure will apply to both the Fibonacci and the Galois LFSR configurations.
+\end{itemize}
+
+% \subsubsection{Range finder interface (proximity sensor)}
+% \begin{itemize}
+% \item \textit{Interface module:} This module should interface with the range finder, only controlling the trigger signal and directing the echo signal. 
+
+% \item \textit{Calculation module:} This module should take the received echo signal as an input.  Upon receiving this signal the module should perform the needed calculations to change the input to the desired unit of distance.  This calculated distance should be the output of the module. 
+
+% \item \textit{Display module:} This module should take a multi-bit input and output this number on the seven segment display. 
+% \end{itemize}
+
+\subsubsection{Dr. Nim board game}
+Along with usual FSM and counter modules, you are supposed to create modules for taking the marbles, changing the player turn and required computation for computer's turn. Here are the general modules that you will need (The number of modules and submodules might vary depending on your implementation):
+\begin{itemize}
+\item A module to choose the number of marbles during your turn. You might want to reset the game if invalid number of marbles (more than three) are taken. There should also be the option to switch the player once you are done with your turn.
+\item A module to do the computation to take the required number of marbles during computer's turn.
+\item A top-level module to combine all the modules.
+\item (Optional) You can include the option to choose between a computer or your lab mate as a second player. 
+\end{itemize}
+
+% \item You are supposed to write testbench for each module to test and debug them.
+
+% \item Also if needed, you are supposed to modify/revise your FSM and datapath from milestone1. 
+
+% \subsubsection{Conway's one-dimensional life game}
+% % For the second milestone you will need to implement a module for determining the next cells from the original input and a controller module to run the game. these will need to be verified with a testbench for each module.
+% \begin{itemize}
+% \item One or more modules for determining the next cells from the original input.
+% \item A controller module to run the game.
+% \end{itemize}
+
+% \subsubsection{Simon Game}
+% \begin{itemize}
+% \item Imported 7-segment code (lab-2) and added counter (lab-6) that properly increments when a player clears a round and resets when the play game switch is OFF.
+% \item Created a clock divider module that will pulse the output LEDs at half-second intervals. This is also used to make the state machine transition at half second intervals so the computer plays at a human perceivable rate.
+% \item Created a timer module that will casue the player to lose if they don't press a button within 3-4 seconds of it being their turn.
+% \item Created a module that stores the pattern of LEDs that the FSM module can read out.
+% \item Created FSM module that correctly resets once the play game switch is OFF. FSM module correctly displays the sequence of LEDs and properly compares the user input to the stored sequence.
+% \item \textit{Hint: } use a 4-to-1 MUX (4-bits wide for each input) to easily switch between the computer showing the pattern, user button presses, all LEDS on, and all LEDs off. The select line of this MUX is controlled by the FSM. You can also do a bit wise AND with the pattern and the half second clock to make the pattern flash at half second intervals (i.e. \texttt{pattern \& \{4\{half\_sec\}\}} ).
+% \end{itemize}
+
+\subsubsection{Simple 4-bit processor}\label{processor2}
+\begin{itemize}
+\item \textit{Controller FSM module}.
+\item \textit{Datapath modules}: Verilog description of \textbf{all} datapath components in your revised high-level design from the first milestone.
+\item \textit{Top-level module}: Top-level Verilog module describing connections between datapath components and controller.
+\item Complete all general requirements for testbenches, simulation, and check-off.
+\item You may use the Python script called simple\_compiler.py found on Canvas under the folder /files/Simple 4-bit Processor. There is a README file there too that explains how to use it. This script takes in assembly code and produces Verilog code that you can paste in the case statements in the ROM.v. This is to help aid you in making your own programs rather than typing the binary by hand. If you are using the ECE drive a Python interpreter is already installed, if you are not on the ECE drive then you may have to install Python. 
+\item Implement your design on the Basys3 board and make sure the single-mode operation is fully functional on the board. Check this off with your lab TA.
+\end{itemize}
+
+\subsubsection{Color Pong Game}\label{colorPong2}
+\begin{itemize}
+\item \textit{FSM controller modules:} Verilog description for the ball's position, scoring rules, LED color control, and other controllers you might need.
+\item \textit{Datapath modules}: Verilog description of \textbf{all} datapath components in your revised high-level design from the first milestone.
+\item \textit{Top-level module}: Top-level Verilog module describing connections between datapath components and controller.
+\item Complete all general requirements for testbenches, simulation, and check-off.
+\item Implement your design on the Basys3 board and make sure that the ball and the two players designs are fully functional on the board. Check this off with your lab TA.
+\end{itemize}
+
+% \subsubsection{Line wobbler game}\label{lineWobbler}
+% You will need to build a machine that lights up the correct amount of LED's and then rotates all LED's at a constant speed. This would exclude the small segment that will be controlled by the user. With that small segment, have it light up but not move so that the other LED's will run into it and the game should go into a fail state, which it will stay in until the user hits a reset button. You should create simulations for all of your modules and get this part of the game implemented on the board. You will need to check off with your lab TA. After having this portion completed, you will only need to add the logic for the user controlled segment and the game will be complete. 
+
+% As a side note since dr winstead always asks for levels of sharing permission allowed from students when they turn in projects we should have access to working code for every one of these projects \url{https://choosealicense.com/licenses/}

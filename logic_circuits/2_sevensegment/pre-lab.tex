@@ -1,0 +1,36 @@
+\section{Pre-lab 2}
+\begin{enumerate}
+    \item Segments \textit{d}, \textit{e}, and \textit{f} 
+        \begin{flalign*}
+  d &= (x_3+x_2+x_1+\overline{x}_0)\cdot(x_3+\overline{x}_2+x_1+x_0)\cdot(x_3+\overline{x}_2+\overline{x}_1+\overline{x}_0)&\\
+     &= (x_3+x_1+x_2x_0+\overline{x}_2\overline{x}_0)\cdot(x_3+\overline{x}_2+\overline{x}_1+\overline{x}_0) & \text{[Solution for \textit{a}]}\\
+     &= x_3+(x_1+x_2x_0+\overline{x}_2\overline{x}_0)\cdot(\overline{x}_2+\overline{x}_1+\overline{x}_0) & \text{[12b: Distributive]}\\
+     &= x_3+\overline{x}_2x_1+x_1\overline{x}_1+x_1\overline{x}_0+x_2\overline{x}_2x_0+x_2\overline{x}_1x_0+x_2x_0\overline{x}_0+\,\overline{x}_2\overline{x}_2\overline{x}_0+\overline{x}_2\overline{x}_1\overline{x}_0+\overline{x}_2\overline{x}_0\overline{x}_0 & \text{[12a: Distributive]} \\
+     &= x_3+\overline{x}_2x_1+0+x_1\overline{x}_0+0+x_2\overline{x}_1x_0+0+\overline{x}_2\overline{x}_2\overline{x}_0+\overline{x}_2\overline{x}_1\overline{x}_0+\overline{x}_2\overline{x}_0\overline{x}_0 & \text{[8a]} \\
+     &= x_3+\overline{x}_2x_1+0+x_1\overline{x}_0+0+x_2\overline{x}_1x_0+0+\overline{x}_2\overline{x}_0+\overline{x}_2\overline{x}_1\overline{x}_0+\overline{x}_2\overline{x}_0 & \text{[7a]} \\
+     &= x_3+\overline{x}_2x_1+0+x_1\overline{x}_0+0+x_2\overline{x}_1x_0+0+\overline{x}_2\overline{x}_0+\overline{x}_2\overline{x}_0+\overline{x}_2\overline{x}_1\overline{x}_0 & \text{[10b: Commutative]} \\
+     &= x_3+\overline{x}_2x_1+0+x_1\overline{x}_0+0+x_2\overline{x}_1x_0+0+\overline{x}_2\overline{x}_0+\overline{x}_2\overline{x}_1\overline{x}_0 & \text{[7a]} \\
+     &= x_3+\overline{x}_2x_1+0+x_1\overline{x}_0+0+x_2\overline{x}_1x_0+0+\overline{x}_2\overline{x}_0 & \text{[13a: Absorption]} \\
+     &= x_3+\overline{x}_2x_1+x_1\overline{x}_0+x_2\overline{x}_1x_0+\overline{x}_2\overline{x}_0 & \text{[6b]}
+\end{flalign*}
+\begin{flalign*}
+    e &= \overline{x}_3\overline{x}_2\overline{x}_1\overline{x}_0 + \overline{x}_3\overline{x}_2x_1\overline{x}_0 + \overline{x}_3x_2x_1\overline{x}_0 + x_3\overline{x}_2\overline{x}_1\overline{x}_0 & \\
+    &=\overline{x}_3\overline{x}_2\overline{x}_1\overline{x}_0 + x_3\overline{x}_2\overline{x}_1\overline{x}_0 + \overline{x}_3\overline{x}_2x_1\overline{x}_0 + \overline{x}_3x_2x_1\overline{x}_0 & \text{[10b: Commutative]} \\
+    &=\overline{x}_2\overline{x}_1\overline{x}_0 + \overline{x}_3\overline{x}_2x_1\overline{x}_0+\overline{x}_3x_2x_1\overline{x}_0 & \text{[14a: Combining]} \\
+    &=\overline{x}_2\overline{x}_1\overline{x}_0 + \overline{x}_3x_1\overline{x}_0 & \text{[14a: Combining]}
+\end{flalign*}
+\begin{flalign*}
+    f &= (x_3+x_2+x_1+\overline{x}_0)\cdot(x_3+x_2+\overline{x}_1+x_0)\cdot(x_3+x_2+\overline{x}_1+\overline{x}_0)\cdot(x_3+\overline{x}_2+\overline{x}_1+\overline{x}_0) & \\
+    &= x_3 + (x_2+x_1+\overline{x}_0)\cdot(x_2+\overline{x}_1+x_0)\cdot(x_2+\overline{x}_1+\overline{x}_0)\cdot(\overline{x}_2+\overline{x}_1+\overline{x}_0) & \text{[12b: Distributive]} \\
+    &= x_3+(x_2+x_1+\overline{x}_0)\cdot(x_2+\overline{x}_1)\cdot(\overline{x}_2+\overline{x}_1+\overline{x}_0) & \text{[14b: Combining]} \\
+    &= x_3+[x_2+(x_1+\overline{x}_0)\cdot\overline{x}_1]\cdot(\overline{x}_2+\overline{x}_1+\overline{x}_0) & \text{[12b: Distributive]} \\
+    &= x_3+(x_2+\overline{x}_1\overline{x}_0)\cdot(\overline{x}_2+\overline{x}_1+\overline{x}_0) & \text{[16b]} \\
+    &= x_3+x_2\overline{x}_2+x_2\overline{x}_1+x_2\overline{x}_0+\overline{x}_1\overline{x}_1\overline{x}_0+\overline{x}_1\overline{x}_0\overline{x}_0 & \text{[12a: Distributive]} \\
+    &= x_3+0+x_2\overline{x}_1+x_2\overline{x}_0+\overline{x}_1\overline{x}_1\overline{x}_0+\overline{x}_1\overline{x}_0\overline{x}_0 & \text{[8a]} \\
+    &= x_3+0+x_2\overline{x}_1+x_2\overline{x}_0+\overline{x}_1\overline{x}_0+\overline{x}_1\overline{x}_0 & \text{[7a]} \\
+    &= x_3+0+x_2\overline{x}_1+x_2\overline{x}_0+\overline{x}_1\overline{x}_0 & \text{[7a]} \\
+    &= x_3+x_2\overline{x}_1+x_2\overline{x}_0+\overline{x}_1\overline{x}_0 & \text{[6b]}
+\end{flalign*}
+    \item NAN Signal: $x_3\cdot(x_2+x_1)$
+\end{enumerate}
+\newpage

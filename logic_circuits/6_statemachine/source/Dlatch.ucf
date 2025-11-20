@@ -1,0 +1,6 @@
+NET "d" LOC = "L3";  # Bank = 3, Signal name = SW1
+NET "en" LOC = "P11";  # Bank = 2, Signal name = SW0
+
+
+NET "q" LOC = "M11" ;  # Bank = 2, Signal name = LD0
+NET "en" CLOCK_DEDICATED_ROUTE = FALSE;

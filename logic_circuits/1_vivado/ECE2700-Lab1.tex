@@ -1,0 +1,861 @@
+\documentclass[10pt, onecolumn]{scrartcl}
+\usepackage{amsmath, graphicx}
+\usepackage{color}
+\usepackage[dvipsnames]{xcolor}
+\usepackage[top=1in, bottom=1in, left=1in, right=1in, includefoot]{geometry}
+\usepackage{fancyvrb}
+\usepackage{siunitx}
+\usepackage[formats]{listings}
+\usepackage[unicode=true]{hyperref}
+
+
+\lstdefinelanguage{xdc}{
+  sensitive=false,
+  alsoletter={.},
+  morekeywords={set_property,create_clock, get_ports},
+  morecomment=[l]{\#},
+  morestring=[b]"
+}
+
+\lstdefineformat{Vlog}{~=\( \sim \)}
+\lstset{ %
+  basicstyle=\ttfamily,        % the size of the fonts that are used for the code
+  format=Vlog,
+  breaklines=false,                 % sets automatic line breaking
+  language=Verilog,
+  commentstyle=\color{red},    % comment style
+  frame=single,                    % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for
+                                % keeping indentation of code
+                                % (possibly needs columns=flexible)
+  keywordstyle=\bfseries,       % keyword style
+  keywordstyle=\color{blue},       % keyword style
+  morekeywords={*,...},            % if you want to add more keywords to the set
+  rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  tabsize=7, % sets default tabsize to 2 spaces
+ }
+
+\newcommand{\dollar}{\mbox{\textdollar}}
+
+\usepackage{tcolorbox}
+% \tcbuselibrary{minted,skins}
+
+% \newtcblisting{commandshell}[1][]{
+%   listing engine=minted,
+%   colback=bg,
+%   colframe=black!70,
+%   listing only,
+%   minted style=colorful,
+%   minted language=bash,
+%   minted options={linenos=true,numbersep=3mm,texcl=true,#1},
+%   left=5mm,enhanced,
+%   overlay={\begin{tcbclipinterior}\fill[black!25] (frame.south west)
+%             rectangle ([xshift=5mm]frame.north west);\end{tcbclipinterior}}
+% }
+% %\definecolor{bg}{rgb}{0.85,0.85,0.85}
+
+% \usepackage{tcolorbox}
+% \newtcblisting{commandshell}[1][]{
+%  listing engine=minted,
+%   colback=GreenYellow,
+%   colupper=Black,
+%   colframe=yellow!75!black,
+%   listing only,
+%   minted style=colorful,
+%   minted language=bash,
+%   minted options={linenos=true,numbersep=3mm,texcl=true,#1},
+%   left=5mm,enhanced,
+%   overlay={\begin{tcbclipinterior}\fill[black!25] (frame.south west)
+%             rectangle ([xshift=5mm]frame.north west);\end{tcbclipinterior}},
+% %   minted every listing line={\textcolor{LimeGreen}{\ttfamily\bfseries [ecestudent@centos8 $\sim$]\$> }}
+% }
+
+% \tcbset{gitexample/.style={listing and comment,comment={#1},
+% skin=bicolor,boxrule=1mm,fonttitle=\bfseries,coltitle=black,
+% frame style={draw=black,left color=Goldenrod,right color=Goldenrod!50!Goldenrod},
+% colback=black,colbacklower=Goldenrod!75!Goldenrod,
+% colupper=white,collower=black,
+% listing options={language={bash},aboveskip=0pt,belowskip=0pt,nolol,
+% basicstyle=\ttfamily\bfseries,extendedchars=true}}}
+
+\setlength\parindent{0pt}
+
+%\usepackage{inconsolata}
+
+%\fvset{fontfamily=inconsolata}
+
+\begin{document}
+\title{ECE 2700 Lab 1}
+\subtitle{Due at the end of your registered lab session (100 points)}
+\date{}
+\maketitle
+
+\vspace{-0.5in}
+
+% \begin{center}
+% \textbf{\huge{}Linux Exercises}{\huge\par}
+% \par\end{center}
+
+\section{Objectives}
+Become familiar with Vivado.
+\begin{itemize}
+  \item Introduce programming in Verilog.
+  \item Perform testbench simulation to verify design function.
+  \item Deploy simple designs on the FPGA board.
+\end{itemize}    
+% \item Introduce clocking concepts
+% \item Introduce block-design concepts in Vivado
+
+
+% \section{Pre-Lab Preparation}
+% \begin{itemize}
+% \item Purchase a Basys3 Board from the ECE store prior to
+%   your lab session. You should also read this document in its entirety
+%   beforehand.\label{sec:prelab1}
+% \item In order to boot into the external drive, you must first disable the Secure Boot setting in your BIOS. Accessing the BIOS is different depending on the make of your computer. You should try searching "How to disable secure on a HP computer" or something similar online, depending on your computer manufacturer (Asus, HP, Dell, etc.), to find specific instructions.
+% \item Once Secure Boot has been disabled, you can boot into the external drive by accessing your One-Time Boot Menu while starting your computer with the drive plugged in (again, try googling "How to access one time boot menu for hp computer" or something similar). Then select the drive called Samsung SSD or CentOS (names may vary).
+% \item The password for the ecestudent account is @aggies123
+% \item Use the ecestudent account to do your labs and project for this course. You should not need to create a separate account.
+% %\item Continue to work on Section~\ref{sec:linux}.
+% \end{itemize}
+
+
+
+% \section{Working with PDF files}
+
+% In this course, your assignment files will typically be provided as
+% PDF documents. You are expected to produce lab reports in PDF format.
+% NGSpice will deliver printouts in PostScript format, and you will
+% probably want to view them, convert them to PDF and include them in
+% your report. To do this, try the following exercises:
+% \begin{enumerate}
+% \item From Canvas, save a PDF file of this tutorial. Depending on your browser
+% configuration, the default save location will be either \texttt{\textasciitilde /Desktop},
+% \texttt{\textasciitilde /Documents} or \texttt{\textasciitilde /Downloads}.
+% Note the default save location so that you can find downloaded files
+% in the future.
+
+% \item After saving the file, open your terminal window and navigate to the
+% directory where you placed the document. From the terminal, you can
+% open the document using this command: \begin{commandshell}
+% evince <filename.pdf> &
+% \end{commandshell}
+% Go ahead and verify that you can open the tutorial document from the
+% terminal.
+% \item Next, from Canvas download the file \texttt{figure.ps}, which is a
+% PostScript file. From the terminal, verify that you can open it with
+% \texttt{evince}. 
+
+% \item Now convert it to PDF using the command
+% \begin{commandshell}
+% ps2pdf figure.ps figure.pdf
+% \end{commandshell}
+% and open \texttt{figure.pdf} with \texttt{evince}. Notice that the
+% figure is awkwardly placed on a full letter-sized paper sheet. This
+% won't work for including the figure in documents and reports.
+% \item To create a more compact image, we need to crop the figure's
+%   \emph{bounding box}. This can be done using the \texttt{-dEPSCrop} option:
+% \begin{commandshell}
+% ps2pdf -dEPSCrop figure.ps figure_cropped.pdf
+% \end{commandshell}
+% Now open \texttt{figure\_cropped.pdf} using \texttt{evince} and verify
+% that you have minimized the whitespace around the figure.
+% \end{enumerate}
+
+% \section{Using ZIP archives}
+% In many cases your course files will be delivered as ZIP archives.
+% This includes your lab report template and SPICE examples. To practice
+% working with these files, download \texttt{lab\_report\_template.zip}
+% from Canvas (\textbf{do not} open it with the GUI archive manager
+% tool at this time). Then follow these steps:
+% \begin{enumerate}
+% \item In your terminal, navigate to the directory where \texttt{lab\_report\_template.zip}
+%   was saved. Expand the archive using this command:
+% \begin{commandshell}
+% unzip lab_report_template.zip
+% \end{commandshell}
+
+% \item Navigate into the new \texttt{lab\_report\_template} directory and
+% perform a directory listing using \texttt{ls}. 
+% \item Open the PDF file using \texttt{evince} and examine the template's
+%   contents.
+  
+% \item Open the template file in \LyX{} using this command:
+% \begin{commandshell}
+% lyx lab_report_template.lyx &
+% \end{commandshell}
+% At this time, experiment with the \LyX{} editor. Make changes to the
+% template and verify that you can produce a PDF document from \LyX .
+% Try adding an equation using \texttt{Insert$\rightarrow$Math} and
+% study the equation editor. Experiment with different types of equations,
+% e.g. inline, display, etc. Don't worry about messing up the template,
+% you can always re-expand the zip file to get a pristine version.
+% \item In the terminal, copy the \texttt{figure\_cropped.pdf} file into the
+% directory \texttt{lab\_report\_template/figures}. 
+% \item In \LyX , try creating a figure using the \texttt{Insert$\rightarrow$Float}
+% command, then place \texttt{figure\_cropped.pdf} as the figure image.
+% Export a PDF preview and see how it looks. Adjust the figure settings
+% until it looks decent in the final PDF document.
+% \item Once you are comfortable with basic operations in \LyX , take a look
+% at the Help menu in \LyX , which provides access to a detailed Introduction,
+% Tutorial and User's Guide. Spend some time with these documents to
+% get the most out of \LyX .
+%\end{enumerate}
+
+% \section{Resources}
+% You can download the Vivado Design Suite, version 2015.4 (available for Windows and Linux) and install it on your personal computer. Please refer to the course syllabus for more details. If you use Mac OS X, you can run Vivado using a virtual machine application like Parallels, but this takes some extra time to setup.
+
+\section{Digital Design in Vivado}
+\subsection{Setting up a back up folder for your work}
+
+It is important to backup your work constantly because if for any reason your drive should fail, or the boot process were to get corrupted their is \textbf{NO WAY} for you to recover your work. This is why a back up folder is needed.\\
+
+To set up a backup folder, open your file explorer (by searching ``Dolphin'' in the application launcher or Start menu). Navigate to ``Home'', then click F10 to create a new folder. Name this folder something recognizable without spaces, perhaps \texttt{ece2700}.
+To regularly back up this folder, open Firefox and navigate to \texttt{usu.app.box.com}. To back up your work at regular intervals (i.e., after any major change), you can drag and drop your project folder from Dolphin into the Box folder, then confirm in Firefox that you wish to upload the folder.
+
+\noindent \textbf{SHOW YOUR TA YOUR BACKUP FOLDER IN BOX AND IN DOLPHIN}
+
+% \textit{Set up:}\\
+% First open up Firefox and go to myusu. \\
+% Next type "Box" into the search bar. \\
+% Click box with a folder icon next to it. \\
+% You will then be sent to your box which is already set up.\\
+% Next navigate to the Desktop and create a New Folder called "ece2700". \\
+% Then go back to Box and click "new" and "Folder Upload".\\ Then click "Backup Folder" (The one you just created) and then click "upload". \\
+% Then your folder should show up and ready to upload files. To backup your work from Vivado you will need to manually upload your projects there each time.\\
+% \textit{Note:} Every time you create a Vivado project create it in the Backup Folder. Then you will need to go to box and manually upload the project to Box. Also at the end of each lab session you should re-upload your folder to backup your work. \\
+% Inside your user home directory, create a directly called
+% \texttt{ECE2700} or something similar. Then,
+% create a subdirectory called \texttt{Lab1} inside your
+% \texttt{ECE2700} directory. Maintaining a clear file organization will
+% be useful not only for yourself, but also for your TAs.
+\subsection{Start coding in Vivado:}
+
+The program we will be using is called Vivado.
+A shortcut for this program was already created on the
+desktop. Alternatively, you can click on the Centos logo located at the top left corner
+(similar to the ``start'' menu on Windows). On the left menu, you'll
+see a green pin wheel, click it. If Vivado is not pinned to the quick
+access menu, you can search for it by typing `vivado' at the search
+bar in the top center. Make sure to launch Vivado and not Vivado HLS.
+After a moment you should see the Vivado GUI appear. As a useful tip,
+you can quickly switch between windows by pressing \texttt{alt +
+  tab}. This will make switching back and forth between this lab PDF
+and the Vivado window if your screen is not large enough to split
+between the two.
+% If you work in
+% % the \textbf{Design Automation Lab, room EL 105}, 
+% To run the program, open a terminal and launch the Vivado Design Suite.
+% \begin{commandshell}
+% vivado &
+% \end{commandshell}
+% Or by clicking on the Centos logo located at the top left corner
+% (similar to the ``start'' menu on Windows). On the left menu, you'll see a green pin wheel, click it. If Vivado is not pinned to the quick access menu, you can search for it by typing 'vivado' at the search bar in the top center. Make sure to launch Vivado and not Vivado HLS.
+% After a moment you should see the Vivado GUI appear. \\
+% A useful tip, you can quickly switch between windows by pressing \texttt{alt + tab}. This will make switching back and forth between this lab PDF and the Vivado window if your screen is not large enough to split between the two.
+\newpage
+\begin{center}
+\includegraphics[width=6in]{images/Vivado_start.png}
+\end{center}
+
+% \textbf{If you are using the ecestudent account on the ECE
+%   External Hard Drive, then you can skip the license setup step and
+%   proceed to Section~\ref{writeVerilog}}. For your first time running Vivado, you need to configure the user
+% license. In the menu bar, click Help$\rightarrow$Manage License...
+% \begin{center}
+% \includegraphics[width=6in]{images/Vivado_manage_license.png}
+% \end{center}
+% After clicking it, it should popup the Vivado License Manager. (You may see a ``Trusted Storage'' popup warning; you can click OK to dismiss it.) It will take some time (usually about 30 seconds) scanning all the university network licenses. Once this is finished you will be able to interact with the License Manager. Click on "Load License" in the right menu panel, then click the big ``Copy License'' button:
+% \begin{center}
+% \includegraphics[width=6in]{images/Vivado_load_license.png}
+% \end{center}
+% In the file browser, navigate to \textbf{/opt/xilinx/} and select the file \textbf{Xilinx.lic}. Then click \textbf{Open} to load this license into your user settings.
+% \begin{center}
+% \includegraphics[width=4in]{images/Vivado_license_file_browser.png}
+% \end{center}
+
+% It may take a moment, but once this is complete you can close the License Manager and continue with the lab.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Writing Verilog Code and Simulating Your Design}\label{writeVerilog}
+
+Now go back to the Vivado start menu, and click \textbf{Create New Project}. For the project name, do the following:
+\begin{itemize}
+    \item \textbf{Project Name:} \texttt{myandgate}
+    \item \textbf{Project Location:} click on the `\dots' button (at
+      the far right) and navigate to the folder you created for your labs (perhaps called \texttt{ece2700}). Create a subdirectory for this lab, perhaps called \texttt{lab1}.
+      % shared \texttt{ECE2700
+        % $\rightarrow$ Lab1} subdirectory. % Then
+      % click the starred-folder icon to create a new subdirectory
+      % called Lab1. Select the new Lab1 subdirectory to
+      Use this subdirectory to organize all of your Lab 1 projects.
+      % click on the `\dots' button (at
+      % the far right) and navigate to your 2700 Labs subdirectory. Then
+      % click the starred-folder icon to create a new subdirectory
+      % called Lab1. Select the new Lab1 subdirectory to organize all of
+      % your Lab1 projects.
+    \item \textbf{Create project subdirectory:} make sure this is checked. This will place the myandgate project in its own folder. In later labs, there will be multiple projects for the same lab.
+\end{itemize}
+Your window settings should look something like this:
+\begin{center}
+    \includegraphics[width=4in]{images/Vivado_project_name.png}
+\end{center}
+Now click \textbf{Next}, and in the next wizard screen select \textbf{RTL project}. Click \textbf{Next} again. 
+
+The next wizard screen gives you the option to \textbf{Add Sources}. In this screen, click \textbf{Create File}. A popup window should appear titled ``Create Source File.'' In this popup, enter the name \texttt{myandgate.v} in the \textbf{File Name} box, then press OK. Back in the New Project wizard, click \textbf{Next}.
+
+% The next screen asks if you want to Add Existing IP. We won't be doing that here, but we'll pause to note that ``IP'' stands for ``Intellectual Property,'' and basically refers to any pre-packaged submodule or resource that you got from someone else. Click \textbf{Next}.
+
+The next wizard screen lets you \textbf{Add Constraints}. A constraint
+file is a crucial part of any physical design, since it defines how
+your Verilog signals relate to the physical resources on the Basys3
+board (i.e. connect internal logic to external pins on the FPGA). Without constraints, your design is just a ghost. Download the
+constraint file, \textbf{Basys3\_Master.xdc}, from the Canvas files page under the labs folder first. Then click
+\textbf{Add Files} to locate this file, then click OK (best to save it to your \texttt{ece2700} directory as you will add this file again and again for each lab). 
+\textcolor{red}{\textbf{In the New Project wizard, make sure the box is checked that says ``copy constraints files into project.'' DO NOT SKIP THIS STEP. Otherwise, this constraints file will be shared between all Vivado projects and when you revisit previous labs they will no longer work.}} Your wizard screen should look like this:
+\begin{center}
+    \includegraphics[width=6in]{images/Vivado_constraints.png}
+\end{center}
+Once everything looks good, click \textbf{Next}.
+
+The next wizard screen is very important, since you need to pick the right hardware in order for the process to succeed. In the wizard screen, click \textbf{Boards}, then in the menu select \textbf{Basys3}. If you select the wrong board, you may encounter vague errors when trying to implement the design on the board.
+\begin{center}
+    \includegraphics[width=4in]{images/Vivado_Basys3.png}
+\end{center}
+Then click \textbf{Next}.
+
+On the final wizard screen, you will see an overview of your new project settings. Check over them and make sure they match what was described in this tutorial. If they don't, you may encounter frustrations and may have to start over again.
+
+When you're happy with your configuration, press \textbf{Finish} to launch your new project. You will use this same basic procedure for creating all lab projects in this course.
+
+\newpage
+
+\section{Writing the Verilog Code}
+
+After you finish with the New Project wizard, you will often see a popup screen that encourages you to specify I/O signals for your new module. Using this window is optional (since you can just type the I/O ports directly in the Verilog file), but it can save time to enter them into this window. You want \textbf{one output named F and two inputs named A and B}, like this:
+\begin{center}
+    \includegraphics[width=4in]{images/Vivado_define_module.png}
+\end{center}
+Click OK. Finally you should be at the main Vivado project screen. In the Project Manager, you should see a \textbf{Design Sources} tab with \textbf{myandgate} in bold. Double-click on \texttt{myandgate} to open the Verilog source file. Notice that Vivado has supplied a substantial comment-header at the top of the file; it's a good engineering habit to fill in this information (or at least some of it). 
+
+\newpage
+
+\subsection{Complete Your First Verilog Module}
+
+In the source listing below, notice the indicated line. Add this line
+into your file to create a structural description of an AND gate using
+the Verilog primitive. \textbf{Do not copy and paste the given Verilog
+module below. Type it in your test editor instead.}
+
+\begin{lstlisting}
+`timescale 1ns / 1ps
+///////////////////////////////////////////////////////
+// Company: Utah State University
+// Engineer: ECE2700 Instructor
+// 
+// Create Date: 08/23/2017 04:31:24 PM
+// Design Name: Lab1
+// Module Name: myandgate
+// Project Name: myandgate
+// Target Devices: Basys3
+// Tool Versions: Vivado 2015.4
+// Description: 
+//   a trivial module to implement an and gate
+// Dependencies: 
+//   none.
+// Revision: 
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+///////////////////////////////////////////////////////
+
+
+module myandgate(
+    output F,
+    input A,
+    input B
+    );
+    
+    // ADD THIS LINE:
+    and U1(F,A,B);    
+endmodule
+\end{lstlisting}
+
+\newpage
+
+\subsection{Create a Testbench for the Module}
+You will now create a testbench to in order to simulate your
+\texttt{myandgate} module. The testbench itself is a Verilog module. The basic idea of a testbench is to create
+an environment for your Verilog module. Specifically, it provides the
+two input values for the input ports A and B and it checks the output
+given by port F of the \texttt{myandgate} module.  
+
+To make a testbench, look at the \textbf{Flow Navigator} tab on the far left side of the Vivado project window. Under the \textbf{Project Manager} tab, click \textbf{Add Sources}. Or in the \textbf{Source} window, click the \textbf{+} symbol. This will popup a wizard screen. In the wizard, select \textbf{Add or create \textcolor{red}{simulation} sources.} Make sure this option is selected! Then click \textbf{Next}. 
+
+A new wizard screen should appear. Click \textbf{Create File}, and in the popup window type \textbf{testbench.v} and click OK, then click Finish in the wizard screen.
+
+The \textbf{Define Module} popup should appear. Since a testbench has
+no inputs or outputs, just click OK. It will ask if you are sure;
+choose Yes. If everything was done properly, your screen should look like this:
+\begin{center}
+    \includegraphics[width=6.5in]{images/Vivado_testbench_screen.png}
+\end{center}
+
+\newpage
+
+Under the \textbf{Simulation Sources} folder, expand the
+\textbf{sim\_1} subfolder and you should see your new testbench
+file. Double-click it to open, and enter the Verilog module below for a basic four-pattern behavioral test:
+
+\begin{lstlisting}[language=Verilog]
+module testbench(    );
+    reg  in1, in2;
+    wire out;
+    
+    myandgate DUT(.A(in1), .B(in2), .F(out) );
+    
+    initial begin
+        in1 = 0; in2 = 0;
+        #10
+        in1 = 1; in2 = 0;
+        #10
+        in1 = 0; in2 = 1;
+        #10
+        in1 = 1; in2 = 1;
+        #10
+        $finish;
+    end
+endmodule
+\end{lstlisting}
+
+Save your work. In above \texttt{testbench} module, \lstinline{in1} is a signal that
+provides input values to the input port A of \texttt{myandgate} and
+similarly, \lstinline{in2} is a signal for port B. The signal
+\lstinline{out} is connected to the output port F of the
+\texttt{myandgate} module. 
+
+% Save your work. Remember that \texttt{in1} and \texttt{in2} in the testbench
+% correspond to \texttt{A} and \texttt{B} in your code.
+
+Now let's examine each line of the testbench. First we see the \texttt{timescale} directive. 
+\begin{lstlisting}
+      `timescale 1ns / 1ns
+\end{lstlisting}
+This tells the Verilog compiler that our time unit is one nanosecond, and the internal precision should also be one nanosecond. In this course, we will usually set the units and precision to be the same value. 
+
+Next, we see the \texttt{reg} and \texttt{wire} declarations. Signals
+\texttt{A} and \texttt{B} are typed \texttt{reg} because they are
+assigned in this testbench. By contrast, the \texttt{F} signal is a {\em structural wire}
+that simply connects to the output port F of the \texttt{DUT}
+submodule. We will be discussing the difference between these two signal
+types in future lectures and labs. 
+
+%This tells the compiler that signals \texttt{A} and \texttt{B} are
+%{\em behavioral} signals that will be defined by the testbench
+%code. By contrast, the \texttt{F} signal is a {\em structural wire}
+%that will be defined by the \texttt{DUT} submodule. In other words,
+%reg (register) drives a signal or holds information, and wire carries
+%a signal from one place to another.
+% As a general rule, the outputs from a module will ALWAYS be a wire, and the inputs can be either wires or registers.
+
+The next line declares an {\em instance} of \texttt{myandgate}. The
+module name is the name that appears in the file not the filename
+itself. This instance is named \texttt{DUT}, which stands for ``Design
+Under Test.'' Whenever we create a specific instance of some design, we say
+that the module is {\em instantiated}. The syntax for instantiating a
+module is: 
+
+\begin{lstlisting}
+      <module_type> <instance_name>(<I/O list>)
+\end{lstlisting}
+
+After instantiating the \texttt{myandgate} module, there is an \texttt{initial} block that defines the testbench's behavior. Verilog allows lines of behavioral code to be grouped together when they are surrounded by \texttt{begin} and \texttt{end} statements, as is done here. 
+
+With the \texttt{initial} block, the first line declares a {\em blocking assignment} of \texttt{in1} and \texttt{in2} using the \texttt{=} operator\footnote{We will talk more about blocking vs non-blocking assignments in the future. }. Because this assignment occurs at the start of the \texttt{initial} block, it instructs the simulator that this will be the circuit's initial condition at the start of simulation.
+
+Subsequent lines in the \texttt{initial} block begin with the
+\texttt{\#10} directive. This tells the simulator to {\em delay} for
+10 time units before implementing the next assignment. Since our
+\texttt{timescale} is set to 1ns, this implies a delay of 10ns before
+each new input combination. Our simulation will be finished after
+three such delays, with the final state appearing after 30ns. At 40ns
+the simulation will terminate due to the \texttt{\$finish} system
+task. Remember that the time delay directive only works in simulation,
+these are ignored by the tools when building the project on the
+board.
+
+Now we will check for syntax errors and simulate the AND gate design. Near the bottom of the Vivado Project window, you should see a set of tabs with names \textbf{Tcl Console, Messages, Log, Reports, and Design Runs.} Click on the \textbf{Messages} tab and see if there are any \textbf{Critical Warnings}. A syntax error will appear automatically as a critical warning. If you see any, read the messages and correct any mistakes you may have made in your two files.
+
+When everything looks good, look for the \textbf{Simulation} group at the far left side of the Vivado main window, and click
+% \textbf{Simulation Settings}. A settings window will appear. In the center of the settings window are tabs for \textbf{Compilation, Elaboration, Simulation,} and so on. Click on the \textbf{Simulation} tab and notice the first option, \textbf{xsim.simulate.runtime*}, which is set to 1000ns by default. This tells the simulator to automatically run for 1000ns on startup. But our testbench will finish after just 40ns, so change the value to 40ns and click OK.
+% Next, under the Simulation heading, click 
+\textbf{Run Simulation}. It will produce a drop-down menu; select \textbf{Run Behavioral Simulation}. You should see the simulation view appear. Click on the green \textbf{Untitled} waveform tab. You may see some flat lines because the waveforms are zoomed out. Click the \textbf{zoom-to-fit} button \includegraphics{images/Vivado_zoom_fit.png} to show the actual simulated time window. You should see the waveforms shown below.
+\begin{center}
+\includegraphics[width=6in]{images/Vivado_myandgate_waves.png}
+\end{center}
+Notice the yellow cursor and move it to different times in the
+simulation. Next to each signal name is a \textbf{Value} field that
+reports the signal's value at the cursor time. \textbf{Verify that the
+  output out is correct for all four combinations of in1 and in2.} It
+should be behavior of an AND gate: zero for all cases except when
+in1=in2=1.
+
+\noindent \textbf{PASS OFF YOUR SIMULATION WITH THE TA}
+
+\subsection{Alternative Approach in Writing a Testbench}
+The above testbench example works for our simple AND gate. However, to
+more efficiently provide all input combinations, we might want to
+consider using the \lstinline{always} block in Verilog. Edit your code to match the code below and then rerun the simulation. 
+% for  it is not suitable for large projects, that have many possible states. The code below implements an always block. Edit your code to match the code below and then rerun the simulation. 
+% \newpage
+
+\begin{minipage}[b]{\textwidth}
+\begin{lstlisting}[language=Verilog]
+module testbench(    );
+    reg  in1, in2, clk;
+    wire out;
+    
+    myandgate DUT(.A(in1), .B(in2), .F(out) );
+    
+    initial begin
+        clk = 0;
+        in1 = 0;
+        in2 = 0;
+        forever #10 clk = ~clk;
+    end
+    
+    always @(posedge clk)begin
+        in1 = ~in1;
+        in2 = in2 + in1;
+    end
+endmodule
+\end{lstlisting}
+\end{minipage}
+
+Notice that every input combination is still tested in this new
+testbench module. However, we could easily scale it for tests
+requiring much larger number of input combinations. We will examine
+more about the \lstinline{always} block in lab 2. We only give a brief
+introduction in this lab.\\
+
+First, let us look at the \lstinline{possedge clk} part inside the
+sensitivity list of the always block (i.e., inside \lstinline{always @()}) . For now, all you need to
+know is that the assignments to \lstinline{in1} and \lstinline{in2}
+inside this always block are executed whenever the value of the
+\lstinline{clk} signal changes from 0 to 1. Next, let us 
+look at the two assignments performed by this \lstinline{always}
+block. The first one inverts the value of \lstinline{in1}
+(turning a 0 into a 1 or turning a 1 into a 0) before updating
+\lstinline{in1} with this inverted value. The second assignment
+assigns \lstinline{in2} the sum of \lstinline{in2} and
+\lstinline{in1}. The use of the blocking assignment (indicated by
+the `\lstinline{=}' operator) allows the two assignments to be executed in sequence. However, as we
+will learn in this course, we can specify concurrent assignments using non-blocking assignments.
+
+\noindent \textbf{PASS OFF YOUR SIMULATION WITH THE TA}
+
+% First, notice the \textit{possedge clk}. for now all this means is
+% when ever the value of changes. Next notice the \textit{always @()}
+% statement. This is tells the compiler to tie the code in side the
+% statement to the event that proceeds it. It is a cause and
+% effect. Event A occurs and the the code is executed. The most
+% important thing to note is that the code is \textit{not sequential!}
+% This means that the code will not always execute in a linear
+% order. It is possible for things to occur simultaneously.  
+% =======
+% Notice how every state is still tested. However we could easily adjust the design to fit larger projects. We will talk more about always blocks in lab 2, however here is a brief introduction.\\
+
+% First notice the \textit{posedge clk}, for now all this means is
+% when ever the value of changes. Next notice the \textit{always @()}
+% statement. This is tells the compiler to tie the code in side the
+% statement to the event that proceeds it. It is a cause and
+% effect. Event A occurs and the the code is executed. The most
+% important thing to note is that the code is \textit{not sequential!}
+% This means that the code will not always execute in a linear
+% order. It is possible for things to occur simultaneously.  
+
+% \newpage
+
+\section{Implementation on the Basys Board}
+
+Now that you have verified that your design is correct, you are ready
+to load your design onto the board. Return to the Project Manager View by 
+clicking the \textbf{Project Manager header} in the Flow Navigator on the left side of the Vivado window.
+
+
+Now we need to tell the program which of the Basys3's physical resources (i.e.\ buttons, switches, LEDs and so on) to associate with the signals A, B and F. Since A and B are inputs, it is sensible to associate them with switches. Since F is an output, it is sensible to associate it with one of the board's indicator lights, called Light Emitting Diodes (LEDs). The Basys3 has 16 switches and 16 LEDs; we will use the lowest-numbered among them, namely sw0, sw1 and led0.
+
+In Vivado, resource associations are defined in the \textbf{Basys3\_Master.xdc} file within the \textbf{Constraints} folder in the source browser. Double-click to open the constraints file. It contains a lot of commented-out lines showing examples of constraint definitions. Each constraint has two lines, one to define the associated pin on the FPGA chip, and another to define the logic signal voltage. Find the lines corresponding to sw[0], sw[1] and led[0]. Look for the \texttt{[get ports {sw[0]}]} and change the port names to match the signal names in your top module.\\
+To uncomment multiple lines quickly, highlight the lines you want to uncomment then right click and select \texttt{toggle line comments} near the bottom. The same can be accomplished by highlighting the desired lines then pressing \texttt{ctrl + /}\\
+The final settings should look like this:
+
+\begin{minipage}[b]{\textwidth}
+\begin{lstlisting}[language=xdc]
+## Switches
+set_property PACKAGE_PIN V17 [get_ports {A}]				
+    set_property IOSTANDARD LVCMOS33 [get_ports {A}]
+set_property PACKAGE_PIN V16 [get_ports {B}]				
+	set_property IOSTANDARD LVCMOS33 [get_ports {B}]
+	
+########
+# Other lines cut, to save space here.
+# further down you should find the LEDs section
+########
+
+## LEDs
+set_property PACKAGE_PIN U16 [get_ports {F}]				
+	set_property IOSTANDARD LVCMOS33 [get_ports {F}]
+\end{lstlisting}
+\end{minipage}
+
+Note that the constraint syntax is quite different from Verilog. Comments are entered with a \# sign, and lines do not require semicolons at the end.
+
+Save your changes to the constraint file. Now, in the Flow Navigator, click \textbf{Run Synthesis}. This will map your design to the types of physical logic cells available within the FPGA chip. You should see a roving indicator at the upper right corner of the window, telling you that synthesis is in progress. When its done, a popup window will appear. If successful, select \textbf{Run Implementation} and click OK. In this stage, the tool will map the synthesized design onto {\em specific} resources within the FPGA. Whereas synthesis reduces your design to available resource-types, implementation chooses exactly which resources will be used and how they will be connected together. When it finishes, you will get another popup. Click \textbf{Generate Bitstream} to create the final program file that gets sent to the FPGA.
+
+If all goes well, you will get another popup window saying Bitstream successfully completed. Now click \textbf{Open Hardware Manager}. Now, \textbf{BEFORE you connect your Basys3 board via one of the USB sockets, make sure the jumper JP1 (in the upper right corner of the board) is in the middle position. Also make sure JP2 (in the upper left corner of the board) is in the lower position.} After verifying this, connect your board. In the Hardware Manager view, click \textbf{Open Target} and then \textbf{Auto Connect}. You should see a Xilinx device appear in hardware list. If it doesn't, make sure the board is properly plugged in, that the power switch is turned ON, the red power indicator light is ON, and the jumpers are in the correct positions. If you checked all this and it still doesn't work, try a different USB cable.
+
+Once you see your hardware in the list, click \textbf{Program Device}, select your device (should be the only one listed), and then click OK in the popup window. A progress indicator should rapidly complete the programming. After programming, verify your design by manipulating the two right-most switches along the bottom of the board (note that these are labeled SW0 and SW1). When both switches are ON, the green LED labeled LD0 should light up. 
+
+\noindent \textbf{PASS OFF YOUR IMPLEMENTATION WITH THE TA}
+
+% \newpage
+
+\subsection{Loading your Program into Flash Memory}
+
+On your Basys3 board, try toggling the power switch OFF and back ON. Now see if you can get LD0 to light up again. It won't, because your design is now dropped from the FPGA. It will be useful to make your design {\em persistent} by programming it into the Flash memory. To do this, you will need to modify the \textbf{Bistream Settings} as follows: first, right click \texttt{PROGRAM AND DEBUG} in the Flow Navigator the click \texttt{Bitstream Settings}. Then, in the settings window, check the box next to \textbf{bin\_file}, and click OK. Then click \textbf{Generate Bitstream} again to create both a bit file (for temporary programming) and a bin file (for persistent Flash programming).
+
+The process should complete with no problems. Next, click \textbf{Add Configuration Memory Device} under the Hardware Manager heading in the Flow Navigator (your board must be connected and powered on for this option to be enabled). A popup window will appear showing a catalogue of memory devices. In the drop-down boxes, select the settings shown in the screenshot below, or just \textbf{type S25FL032 in the search field and press Enter}. Depending on the board revision of your Basys 3 board, you may have a different flash module like \textbf{MX25L3233F}. To verify this, look on the back-side of the board for the largest black rectangular chip. On it, you will find the part number and manufacturer name.
+\begin{center}
+    \includegraphics[width=6in]{images/Vivado_configuration_memory_device.png}
+\end{center}
+If you selected the wrong memory device, you may have noticed that the option to add a configuration memory device is grayed out. To edit the memory device, you must right click the flash memory device under the Hardware window in the Hardware Manager. Remove it and then you'll be able to add it again. See the following screenshot.
+\begin{center}
+    \includegraphics[width=6in]{images/remove_mem_config.png}
+\end{center}
+Click OK after selecting the correct memory device. A new popup will appear asking if you want to program the device now. Click OK. Now you get another popup asking for the configuration file. For this, you need to use the file browser to navigate into your myandgate project folder, find the sub-directory named \textbf{myandgate.runs}, and within that go into \textbf{impl\_1}. There you should find \textbf{myandgate.bin}. Select this as the configuration file, then click OK to program your device.
+
+\vspace{0.5cm}
+
+It may take a little while...
+
+\vspace{0.5cm}
+
+When programming is done, turn off the power to your Basys3 board (Vivado may flash a warning message but it doesn't matter, just get rid of it). \textbf{With the power OFF, move JP1 to the upper position.} Then turn the power back on and press the red PROG button then wait for the DONE LED to light up in the upper right corner of the board. Now test your AND gate functions with SW0 and SW1 -- your design should be there. \textbf{Flash programming will be a useful way to show your designs to TAs, instructors, friends, family, neighbors and random passersby.}
+
+\vspace{0.5cm}
+
+\noindent \textbf{Carry your Flash-programmed board to the TA and demonstrate your design so that it can be checked off.}
+
+\section{Alternative AND Gate Description}
+
+To get a little more out of this lab experience, go back to the
+\texttt{myandgate} project and try implementing it using the other two alternative
+methods described below. They are both \emph{behavioral} description
+of the AND gate whereas the one you implemented before uses a
+\emph{structural} description. For both cases, run through the steps and verify that you get the same
+behavior. The first one use \emph{continuous assignment} and the
+second one uses an always block as shown below:
+
+\begin{minipage}[t]{\textwidth}
+\centering
+\begin{lstlisting}
+module myandgate(
+    output F,
+    input A,
+    input B
+);
+    // behavioral description using continuous assignment
+    assign F = A & B; 
+
+endmodule
+\end{lstlisting} 
+\end{minipage}
+
+\begin{minipage}[t]{\textwidth}
+\centering
+\begin{lstlisting}
+module myandgate(
+    output reg F,
+    input A,
+    input B
+);
+    // behavioral description using an always block
+    always @(A, B) begin
+        F = A & B;
+    end
+    
+endmodule
+\end{lstlisting}
+\end{minipage}
+
+
+\noindent \textbf{Demonstrate to your TA both the simulation results and correct FPGA implementation for either of the two above alternative designs.}
+
+%You can also try implementing a more complex example, like to one-bit adder from the Verilog Introduction.
+
+
+%======= Consider moving the clocked design below to a later lab =========
+% \newpage
+
+% \section{Introduction to Clocked Logic}
+
+% Now let's shift attention and experiment with the board's built-in clock resource. The Basys3 has a system clock rate with frequency \SI{100}{\mega\hertz}. In this exercise, we will create a \textbf{clock divider} module to slow down the clock so that we can observe step-by-step events. We will reduce the clock rate to \SI{2}{\hertz}, i.e.\ two events per second, so that you can actually see the clock tick. A slow, observable clock can be useful for studying and debugging sequential logic circuits.
+
+% \subsection{Design}
+% In Xilinx Vivado, create a New Project named \texttt{ClockDivider}. Follow the wizard steps described in the first part of this lab, and create a new Verilog Design Source for a module named \textbf{ClockDivider.v}. Your module should have one input and one output, and the initial template code should look like this (header comments are not shown):
+
+% \begin{lstlisting}
+% `timescale 1 ns/1 ns
+
+% module ClockDivider(
+% 	input clkin,
+% 	output reg clkout // <--- add the "reg" keyword here
+% 	);
+
+% endmodule
+% \end{lstlisting}
+
+% Notice that the keyword \texttt{reg} is inserted in the declaration of \texttt{clkout}. This means that the \texttt{clkout} signal will be defined {\em behaviorally} in an \texttt{always} block. 
+
+% To divide the clock rate, we'll use a simple counter method. We will declare a \texttt{count} variable, initialize it at zero, and increment by one in each cycle of \texttt{clkin}. Once the count adds up to a divisor \texttt{N}, we will flip \texttt{clkout}. Then the frequency of \texttt{clkout} should be 
+% \[ f_\textrm{out} = \frac{f_\textrm{in}}{2N}. \]
+% If the input frequency is $f_\textrm{in} = \SI{100e6}{\hertz}$, then to get an output frequency of \SI{2}{\hertz} we need $N=\SI{25e6}{}$. To represent such a big number in Verilog, we first need to know how many bits are required, which is 
+% \[ \left\lceil \log_2 N\right\rceil = \SI{25}{bits}.\]
+% %As an exercise, try converting $N$ to binary (the answer is in the code shown below). 
+% To implement the clock divider, we add these lines into the module definition:
+
+% \begin{lstlisting}
+% 	reg [24:0] count;
+	
+% 	initial begin
+% 		count  = 0;
+% 		clkout = 0;
+% 	end
+	
+% 	always @(posedge clkin) begin
+% 		if (count == 25'd50_000_000) begin
+% 			count <= 0;
+% 			clkout <= ~clkout;
+% 		end
+% 		else begin
+% 			count <= count + 1;
+% 		end
+% 	end
+% \end{lstlisting}
+
+% In this code, the 25-bit variable \texttt{count} is treated, by default, as an integer. The code in the \texttt{always} block is executed \textbf{synchronously} with the rising edge of the input clock. At each clock, \texttt{count} is incremented by 1. When \texttt{count} reaches \SI{25e6}{}, \texttt{clkout} is \textbf{toggled} (the \texttt{$\sim$} symbol means ``not'').
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+% \subsection{Simulate}
+% Now we will create a \textbf{testbench} for the ClockDivider module. %
+% %Xilinx ISE provides a shortcut that automatically generates a testbench template for you: click \texttt{New Source} and select \texttt{Verilog Test Fixture} as the source type. Name the file \texttt{ClockDividerTest.v}. It will ask you which module to associate your new test fixture. Select \texttt{ClockDivider.v} (it should be the only module in this design). This should automatically create a test fixture template for you. 
+% %
+% Before creating the testbench, we will make a slight modification to \texttt{ClockDivider.v}. For simulation purposes, it will be easier to reduce $N$ to a small number, like eight. So comment out the existing line in your \texttt{ClockDivider.v} module and replace it like this:
+
+% \begin{lstlisting}
+% 	always @(posedge clkin) begin
+% 		//if (count == 25'd25_000_000) begin
+% 		if (count == 25'd8) begin
+% 			count <= 0;
+% \end{lstlisting}
+% Save the file, then click on \textbf{Add Sources}, select \textbf{Add Simulation Sources} and follow the procedures for making a simulation testbench.
+% Open your new testbench file. You now need to setup the input clock. The easiest way is to define an infinite loop using the \texttt{forever} keyword in an \texttt{initial} block:
+
+% \begin{lstlisting}
+% module testbench(
+% );
+%     reg clkin;
+%     wire clkout;
+    
+%     // Instantiate the module to be tested.
+%     // Here we demonstrate named port connections
+%     // as an alternative to ordered port connections:
+%     ClockDivider DUT(.clkin(clkin), .clkout(clkout));
+    
+%     // Define the clock signal using the forever keyword:
+% 	initial begin
+% 		clkin = 0;
+		
+% 		forever #10 clkin = ~clkin;
+% 	end
+% \end{lstlisting}
+% Save your testbench file and run a behavioral simulation as we did before. In the waveform viewer, click the zoom-to-fit icon to see your simulation range. It should like this:
+
+% \begin{center}
+% 	\includegraphics[width=0.9\textwidth]{images/Vivado_clock_divider.png}
+% \end{center}
+% Now verify that \texttt{clkout} flips every eight cycles of \texttt{clkin}. Once you are satisfied, go back to \texttt{ClockDivider.v} and change the \texttt{25'd8} number back to \texttt{25'd25\_000\_000}.
+
+
+% \subsection{Implement}
+
+% Now we need to configure the \textbf{Constraint File} for implementation. You should have already added \textbf{Basys3\_Master.xdc} as a constraint to your project; if not, do so now. Open the constraint file. We will need to find lines that define the system clock, named \textbf{clk} in the default configuration. We will also need to associate \texttt{LED[0]} with \texttt{clkout}. Your completed constraint file should look like this:
+% \begin{lstlisting}[basicstyle=\small]
+% set_property PACKAGE_PIN U16 [get_ports {clkout}]					
+% set_property IOSTANDARD LVCMOS33 [get_ports {clkout}]	
+
+% ## Clock signal
+% set_property PACKAGE_PIN W5 [get_ports clkin]							
+% set_property IOSTANDARD LVCMOS33 [get_ports clkin]
+% create_clock -add -name sys_clk_pin -period 10.00 -waveform {0 5} [get_ports clkin]
+% \end{lstlisting}
+% You must be very careful to ensure that the names referenced with the \texttt{get\_ports} keyword match precisely with the signal names in your design. Once your constraint is complete, run Synthesis, Implementation and Generate Bitstream. Program your device and verify that the LED blinks about twice per second. Show your result to the TA (you may need to program the Flash and carry your board to the TA in order to check it off).
+
+% \newpage
+
+% \section{Using Block Designs}
+
+% In addition to Verilog designs, Vivado supports building schematics using what are called Block Designs. A block design is the preferred way to integrate IP into your project, and you can fairly easily combine block designs with custom Verilog code (the top level of the design is always Verilog; block designs may comprise a sub-hierarchy).
+
+% Start by creating a new project. Call it \textbf{ClockDividerBlock}. Don't create any design sources, but do add the constraint file as before. Once your project is ready, look for the \textbf{IP Integrator} heading in the Flow Navigator and click \textbf{Create Block Design}. It will open the block design editor:
+% \begin{center}
+%     \includegraphics[width=6in]{images/Vivado_block_design_editor.png}
+% \end{center}
+% To implement the clock divider, we need just one type of IP, the \textbf{Binary Counter}, which is an IP implementation of the \texttt{count} signal that we created in our Verilog design. Use the \textbf{Add IP} icon to bring up a list of available IP blocks, and search for ``binary counter.'' Select it and press Enter. It will place a module block in the editor. Double-click the module to customize its settings. Change the \textbf{Output Width} to 25 bits. You want to enable two checkboxes: \textbf{Restrict Count} and \textbf{Sync Threshold Output}. Then in both fields, you need to enter the \textbf{hexadecimal equivalent of 25$\times 10^6$.} 
+% \begin{center}
+%     \includegraphics[width=6in]{images/Vivado_binary_counter.png}
+% \end{center}
+
+% \newpage
+% Notice the \textbf{Threshold} output from the binary counter. This signal will sit at zero most of the time, but when the count reaches the threshold value it will flip to 1. Since the threshold value is the same as the counter's maximum value, it will occur only once and then the counter is reset back to zero. With each clock cycle, it will count back up from zero until it hits the threshold again, then the threshold output will pulse at 1 for one clock cycle before dropping back to 0.
+
+% Once your binary counter is customized, place {\em another} binary counter in the design and double-click to customize it. This time, set the output width to 1 -- this will be a one-bit ``counter'' that just toggles back and forth between 1 and 0. If the ``clk'' input for counter 2 is connected to the threshold output from counter 1, then the 1-bit output will toggle every time counter 1 reaches its threshold.
+
+% To complete the design, right click somewhere in the editor screen, and select \textbf{Create Port} from the drop-down menu. Create an input port called \texttt{clkin} and an output port called \texttt{clkout}. Then simply click the ports and I/O pins to create the connections shown below:
+% \begin{center}
+%     \includegraphics[width=6in]{images/Vivado_clock_divider_block_design.png}
+% \end{center}
+% When you are finished, save the block design and then click on the \textbf{Project Manager} header in the Flow Navigator to return to the Project Manager view. In the source browser you should see your block design, shown with a new icon that looks like a stack of gold bars:
+% \begin{center}
+%     \includegraphics[width=4in]{images/Vivado_block_design_browser.png}
+% \end{center}
+% Right click on the block design, and select \textbf{Create HDL Wrapper}. Leave the default setting in the popup window and click OK. This will create a Verilog ``wrapper'' module that lets your block design interface with the design hierarchy. Once this is done, you can use the same Constraint settings that you used for the Verilog version of the \texttt{ClockDivider} module.
+
+% After completing your constraint settings, click \textbf{Generate Bistream} and follow the prompts to step through synthesis and implementation. After the bitstream is generated successfully, program your device and demonstrate it to your TA so it can be checked off.
+
+%\newpage
+
+\section{TA Checkoff}
+
+\begin{itemize}
+  % \item (4 points) Complete pre-lab work prior to start of the lab.
+\item (4 points) Set up a backup folder and create the project in Vivado.
+\item (16 points) Correct simulation of the AND gate.
+\item (10 points) Correct implementation of the AND gate on the Basys3 board.
+\item (20 points) Correct simulation and implementation of alternative AND on the Basys3 board. 
+\item Successful upload of your myandgate/Lab1 Project into BOX
+% \item (10 points) Correct simulation of the clock divider.
+% \item (20 points) Correct implementation of the clock divider on the Basys3 board.
+% \item (20 points) Correct block design implementation of the clock divider on the Basys3 board.
+\end{itemize}
+
+%\noindent \textbf{ Important: Please upload your .v files and .ucf file on
+%  Canvas. Failure to do so will result in a zero for this assignment.}
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

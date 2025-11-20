@@ -1,0 +1,28 @@
+\begin{enumerate}
+\item Create a shared folder in virtual box (https://www.techrepublic.com/article/how-to-share-folders-between-guest-and-host-in-virtualbox/). Make sure to select auto-mount. 
+
+\item Download xdc file to shared folder. Then 
+include it in the project.
+
+\item Booting order: power on host machine $\rightarrow$ power on virtualbox instanace $\rightarrow$ plug in the Basys3 board $\rightarrow$ power off virtualbox instance
+$\rightarrow$ unplug in the Basys3 board
+$\rightarrow$ power off host machine
+$\rightarrow$ remove the ECE external drive.
+
+\item Add xdc file to the decoders for lab 4
+
+\item Bug found by Chris Winstead: I experienced a bug testing Vivado today. The fix is simple, and you may want to advise your students to take these steps:
+\begin{enumerate}
+    \item Launch Vivado, create a project
+    \item In the top menu bar, select Tools->Text Editor, then Syntax Checking
+    \item Change from “sigasi” to “vivado”
+    \item Restart Vivado
+\end{enumerate}
+For some reason the sigasi checker crashes sometimes.
+
+\item Maybe we should make a tip sheet for using the drive; using a shared folder is a good idea for several reasons, also it’s good to see that the students’ files can be recovered from the shared folder even if the vdi file is lost.
+
+
+
+ 
+\end{enumerate}

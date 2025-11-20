@@ -1,0 +1,127 @@
+\section*{\centering Final Project (Milestone 1)}
+
+You are required to choose one topic listed in this document for your final project. 
+%Projects~\ref{simonGame}~and~\ref{processor}
+% and \ref{lineWobbler} are
+Project~\ref{processor}
+is worth 130 points; project \ref{colorPong} is worth 150 points; and the rest are each worth 100 points. The final project is for each individual student to complete, so you are not allowed to work as a group with others. Note that you are \emph{not allowed} to switch project topic after the first milestone deadline passes. 
+% You may choose to earn extra credits if you complete a second project.
+% However, you are \emph{required} to complete \emph{all} three milestones of the first project, before you can earn extra credits on the second project. Additionally, extra credits are only awarded to one additional project, even if you mange to complete two or more additional projects. 
+% For project \ref{lineWobbler}, your design implementation will need to interface with the LED strip device in lab 304 in the Engineering Lab building.
+You are required to check off all items below with your lab TA by milestone 1's due date.
+
+For project~\ref{random}, you should complete its specific first milestone instead. 
+Complete the required items below for your choice of project topic:
+\begin{itemize}[noitemsep,nolistsep]
+\item Choose a project topic from the list below as your final project. 
+\item Complete an Algorithmic State Machine (ASM) flowchart for your design.
+\item Complete the datapath design for your design.
+\item Complete the derivation for the controller's FSM.
+\end{itemize}
+
+
+\subsection*{Project Topics}
+\subsubsection{Simple 8-bit ALU calculator}
+
+Your design should allow the user to select the following operations: addition, subtraction, multiplication, division (need to handle ``divide-by-zero"), logical shift (either left or right), bitwise AND, and bitwise OR. It should only allow at most one operation to be conducted at a time. You may assume inputs are unsigned numbers. Display the output on the seven segment display in decimal or hexadecimal as well as on the LED lights in binary. You should consider reusing Verilog modules you designed in this course, such as the seven-segment display, etc. Note, you may use behavioral Verilog to implement the operations instead of a structural implementation. This means you can use the \lstinline[language=Verilog]{+, -, *, /, & , |} operators rather than having a module that does the operation from the ground up. You may choose to use all 16 DIP switches on your Basys board for inputs, and use buttons to encode the operations. Or use 8 DIP switches in combination with buttons to load different registers then use 3 DIP switches to encode the operation.
+
+
+\subsubsection{Random number generator}\label{random}
+Implement the linear-feedback shift register (LFSR) to build a pseudo-random number generator. It would be a good idea to read the following article: \url{https://en.wikipedia.org/wiki/Linear-feedback_shift_register}. It will help you to gain insight into the theory behind the implementation. As part of the project, you are required to implement a maximum length 8-bit LFSR and display the generated psuedo-random number on the LEDs and on the seven segment display. It must be able to display hexadecimal numbers. So you need to modify your code from lab 3 to include displaying decimal numbers 10-15 (i.e. A-F in hexadecimal) on a Seven Segment Display element. A maximum length 8-bit LFSR cycles through $2^{8}$-1 states (i.e., all possible states except the state where all bits are 0). You have to load an initial value, defined as the \emph{seed}, using switches into the LFSR. A button press should update to the next state in the LFSR. This effectively means that you are generating a pseudo-random number on every button press till you cycle through all the possible $2^{8}$-1 states. The bits within an n-bit LFSR that affect the next state are called taps. Taps are XOR'ed in either the Fibonacci or the Galois LFSR configuration to produce the next state of the LFSR. You should choose one configuration to implement first before trying the other. Implementing one configuration is worth 90 points. You will get 10 points after you implement the second configuration to make your final score as 100. %You can implement your LFSR in either configuration.
+
+The first milestone for this project is:
+\begin{itemize}[noitemsep,nolistsep]
+\item Develop Fibonacci and Galois configuration block diagram for the 8-bit maximum length LFSR based on the polynomial for 8-bit maximum LFSR. 
+\item Draw building blocks for your hierarchical Verilog design.
+\end{itemize}
+
+% \subsubsection{NeoPixel LED strip controller}\label{neopixel}
+% % For this project you will need to use the NeoPixel LED strip in ENLAB 304. 
+% You want to program your Basys3 Board to flash lights on the NeoPixel LED strip. The flashing lights on the LED strip must change color at continuous intervals.\url{https://wp.josh.com/2014/05/13/ws2812-neopixels-are-not-so-finicky-once-you-get-to-know-them} is helpful to understand the timing constraints for driving the NeoPixel LED strip. This link also provides an Arduino code for reference.
+
+% \subsubsection{Range finder interface (proximity sensor)}
+% Create a proximity sensor using a range finder module and the Basys board. The objective is to have the distance of an object directly in front of the sensor displayed on the seven segment display of the Basys board. Your display should allow the user to toggle between inches and centimeters, as we wouldn't want to alienate those using a different measurement system. The  Datasheet for SR04, an ultrasonic ranging module can be found here: \url{https://cdn.sparkfun.com/datasheets/Sensors/Proximity/HCSR04.pdf}. The SR04 is a cheap and easy to use range finder module. Read the datasheet to learn how the range sensor works. For example, what it needs as input to get the echo trigger working and what the sensor will return back.
+
+% It is most effective and easier to organize the logic if you first create a finite state machine. If you don't think there's enough to make a finite state machine think about what tasks you can break up into a combination of simpler tasks.   
+
+\subsubsection{Dr. Nim board game}
+The game is played between a human and a computer. In each round, the first player takes one, two, or three marbles from a pool of marbles. Then the second player takes the amount of marbles needed to total the amount to exactly four in the same round. For example, if the first player takes one marble in a round, the second player takes three; if the first player takes two, then the second takes two, etc. In other words, after the first player finishes taking marbles, divide the remaining number of marbles in the pool by four and the remainder is the number of marbles the second player needs to take. If the remainder is zero, then the second player takes only one marble. Then in the next round, the same first player chooses one, two, or three marbles to take, and the second player repeats the same procedure to determine the remaining marbles to take in the same round. The player who takes the last marble from the pool wins the game. Generally the pool of marbles starts at twelve, but you can choose any integer that is multiple of four to start the game. In this project, the marbles are represented by the FPGA board LEDs, and the objective of the game is to take the last marble, i.e., lighting up the last LED of the FPGA. You will find that as long as the human player is the first player and all the stated rules are maintained, the computer is virtually unbeatable. The following Youtube video explains the game in detail and the underlying mathematics: \url{https://www.youtube.com/watch?v=9KABcmczPdg}.% This strategy makes it unbeatable.
+
+% \subsubsection{Conway's one-dimensional life game}
+% This is a zero player game in which one chooses the initial inputs and then starts the game, based on your starting  'cells' the game will pass through the future generations until all the 'cells' are dead. The first milestone of this project is to, design a finite state machine to control the game. It should determine the strategy that outputs the next set of "cells". An example of this is provided at \url{http://jonmillen.com/1dlife/index.html}. Your design should take inputs (preferably from the switches) and then outputs to the LEDs. The FSM should read inputs from the user, play the game, show the output, allow the game to be canceled at any stage by the user, and restart after the game is over. 
+
+% module will need to use determine the logic that outputs the next set of "cells" 
+% an example of this is provided here \url{http://jonmillen.com/1dlife/index.html}. you will need to take inputs (preferably from the switches) and output to the leds. the finite stat machine should have a state for taking input, for playing the game, for showing the output, and a state to restart after the game is over.
+
+% \subsubsection{Simon Game}\label{simonGame}
+% This is a one player game using LEDs and buttons. The game plays a series of lights and requires a user to repeat the sequence back. If the user succeeds, the series becomes progressively longer and more complex. Once the user fails or the time limit runs out, the game is over. Use 4 LEDs to display the pattern, only one LED is on at a time. It's best, for each pattern of 4 LEDs, to be ON for half a second then OFF for half a second. This way, if LED 2 was ON and the next pattern in the sequence was also LED 2, then player will know they were two separate patterns. After the sequence plays, all 4 LEDs should pulse once to indicate that it is now the users turn. The user uses 4 buttons and presses them in the correct sequence to match the one they saw. The user loses if no buttons are pressed within 3 seconds or if they enter the wrong sequence. Use two additional LEDs to show if the player won or lost. To start/end the game use a switch, while the switch is ON the game should work, if the switch is OFF the game should reset. Lastly, import some of the Verilog code written for the 7-segment display. Every-time the player clears a round, increment the score shown on the 7-segment. The sequence of LEDs should just be hard coded and consist of at least 10 patterns, you could use a random sequence generator but this is not required for this project. Demonstration video link \url{https://youtu.be/aEiuDCbWhOs}.
+
+\subsubsection{Simple 4-bit processor}\label{processor}
+You will be designing a simple 4-bit processor that has four 4-bit registers, and it will have the seven instructions shown in Table~\ref{tbl:4bitProcessor}. Note: that $x$ and $y$ in $R_y$ and $R_x$ are subscripts for the actual registers $R0-R3$. Each instruction is encoded with eight bits. Rather than having separate data lines, the load instruction will carry its data with it within the instruction. The store instruction simply puts the contents of a register into another register which has its output tied to LEDs. Note that the last four bits of this instruction are ignored. The move instruction copies the contents of a register to the other. Its two
+extra instruction bits are ignored. Finally, your ALU must support not
+only add and subtract but also bitwise AND and NOT. Just like the Simple 8-bit ALU calculator, you may use behavioral Verilog for the arithmetic operations rather than using add and subtract modules.
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{c|c|c}
+Operation&Function&Instruction Encoding\\
+\hline
+Load $R_x, Data$ & $R_x \leftarrow Data$ & 00,\texttt{$R_x$},Data \\
+Store $R_x, Data$ & LEDs $\leftarrow [R_x]$ & 01,\texttt{$R_x$},XXXX\\
+Move $R_x, R_y$ & $R_x \leftarrow [R_y]$ &
+                                           10,\texttt{$R_x$},\texttt{$R_y$},XX\\
+Add $R_x, R_y$ & $R_x \leftarrow [R_x] + [R_y]$ &
+                                                  11,\texttt{$R_x$},\texttt{$R_y$},00\\
+Sub $R_x, R_y$ & $R_x \leftarrow [R_x] - [R_y]$ &
+                                                  11,\texttt{$R_x$},\texttt{$R_y$},01\\
+And $R_x, R_y$ & $R_x \leftarrow [R_x]\, \& \, [R_y]$ &
+                                                  11,\texttt{$R_x$},\texttt{$R_y$},10\\
+Not $R_x$ & $R_x \leftarrow \, ![R_x]$ & 11,\texttt{$R_x$},XX,11\\
+\end{tabular}
+\caption{Instructions for the simple 4-bit processor.}
+\label{tbl:4bitProcessor}
+\end{center}
+\end{table}
+
+Your processor should be able to either execute instructions one at a time provided by the user (single-step mode), or execute a
+  series of instructions stored in a read-only memory (ROM) (run mode). A sample ROM Verilog module will be provided to you. You should assign a button to select between these two modes of operation. In single-step mode, your program should be entered via eight dip switches. A button should be used to indicate to the processor each time a new instruction is setup and should be executed. In run mode, your processor should keep a program counter that indexes into an array of instructions. This is already implemented in the ROM module given to you. Your design should fetch and then execute one instruction at a time until it reaches the end of the instruction array stored in the ROM module. Design an interesting program to run on your processor. The program should cover as many operation types as possible.
+
+
+\subsubsection{Color Pong Game}\label{colorPong}
+% \textbf{If you are considering this project as your final project, you will need to receive permission from lab TA Sterling Wall first before proceeding with the first milestone. }
+
+In this project, you will design a system to allow two players to play a color pong game. The colors of the LEDs determine whether the ball is returned to the other side or passes your paddle allowing the other player to score. 
+% The following Youtube link demonstrates an example of the game: \url{https://youtu.be/TGE7c1nYTiE}. 
+The score should be displayed on the the seven segment display. Each player can circulate colors of their paddle to match that of the ball using two push buttons, each controlling the direction of color rotation. 
+
+Your design should include modules to determine the position of the ball and scoring rules. You will design a module to control the color of the LEDs. Note that at every point each LED has a color assigned. The LED strip refreshes all of the lights together at a given frequency. In order to maintain the timing required to communicate with the LED strip a module will need to handle the pulse width modulation. This LED strip controller module will be provided to you. The following link explains the timing requirements of this LED strip: \url{https://cdn-shop.adafruit.com/datasheets/WS2812.pdf}
+
+%%%% Color pong game TODO %%%%
+% The correct data sheet for the RGBW is at https://www.adafruit.com/product/2760 ?
+
+
+
+
+% \subsubsection{Line wobbler game}\label{lineWobbler}
+
+% Line Wobbler is a spin off a game known as dungeon crawler and would make use of a module similar to the rotate LED task in lab 4 in that the generated LEDs rotate at a constant speed and loop back once they get
+% to the end. essentially to create this game all LED's would be lit up
+% the same color except for about 10 LEDs which would be turned off. This
+% empty section would move at a constant speed across the LED
+% strip. Contained within this array of 10 LEDs would be a user
+% controlled segment, out of which 2-3 LEDs are colored differently than
+% the rest of the strip, that would move at a slightly faster rate than
+% the rest. The goal is to keep this small segment in the open area
+% without running in to the "walls" on either side. This is done by
+% constantly moving forward and back. Once a user fails, the whole board
+% flashes red and then user can restart the game with the press of a
+% start button. This game was originally created using a door spring as
+% a joystick but for simplicity you can simply use the buttons on your
+% FPGA board to control movement. This project topic described above is
+% a simplified version of the original game. You want to read the
+% following link to see how this game
+% functions:\url{http://wobblylabs.com/projects/wobbler}. Note that you
+% can also find the Arduino source code online to reference.\url{https://wp.josh.com/2014/05/13/ws2812-neopixels-are-not-so-finicky-once-you-get-to-know-them} is helpful to understand the timing constraints for driving the NeoPixel LED strip. This link also provides an Arduino code for reference.
+
+% As a side note since dr winstead always asks for levels of sharing permission allowed from students when they turn in projects we should have access to working code for every one of these projects \url{https://choosealicense.com/licenses/}
+

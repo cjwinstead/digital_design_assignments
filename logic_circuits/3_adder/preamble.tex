@@ -1,0 +1,41 @@
+\usepackage{amsmath, graphicx}
+\usepackage{xcolor}
+\usepackage[top=1in, bottom=1in, left=1in, right=1in, includefoot]{geometry}
+\usepackage{fancyvrb}
+\usepackage{siunitx}
+\usepackage[formats]{listings}
+
+\lstdefinelanguage{ucf}{
+  sensitive=false,
+  alsoletter={.},
+  morekeywords={NET,LOC},
+  morecomment=[l]{\#},
+  morestring=[b]"
+}
+
+
+\lstdefinelanguage{xdc}{
+  sensitive=false,
+  alsoletter={.},
+  morekeywords={set_property,create_clock, get_ports, IOSTANDARD, LVCMOS33},
+  morecomment=[l]{\#},
+  morestring=[b]"
+}
+
+\lstdefineformat{Vlog}{~=\( \sim \),^=\(^\wedge\)}
+
+\lstset{ %
+  basicstyle=\ttfamily,        % the size of the fonts that are used for the code
+  	format=Vlog,
+  breaklines=false,                 % sets automatic line breaking
+  language=Verilog,
+  commentstyle=\color{red},    % comment style
+  frame=single,                    % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},       % keyword style
+  morekeywords={*,...},            % if you want to add more keywords to the set
+  rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  tabsize=7,                       % sets default tabsize to 2 spaces
+}
+

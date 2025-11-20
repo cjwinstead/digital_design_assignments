@@ -1,0 +1,27 @@
+\begin{tikztimingtable}[%
+ timing/dslope =0.1 , timing/.style={x=2ex ,y=6ex }, x =4 ex ,
+ timing/rowdist =8ex ,
+ timing/name/.style ={ font =\sffamily \scriptsize },
+% timing/nodes/advanced,
+ ]
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+  {$S$} & 4L 10{4C}  \\
+  {$R$} & 8.0L 9{4C} \\
+  {\texttt{clk}} & 1.75L 2H 2L 4H 2L 2H 4L 2H 2L 4H 2L 2H 4L 2H 2L 4H 2L \\
+  {$Q_1$} & 2L ;[ dotted ] 2L;\\
+  {$Q_1^\prime$} & 2H ;[ dotted ] 2H;\\
+  {$Q$} & 2L ;[ dotted ] 2L;\\
+  {$Q^\prime$} & 2H ;[ dotted ] 2H;\\
+%
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \extracode
+  \begin{pgfonlayer}{background}
+    \begin{scope}[gray,semitransparent,semithick]
+      \horlines {}
+      \foreach \x in {0,1,...,22} {
+        \draw (\x,4) -- (\x,-30);
+      };
+    \end{scope}
+  \end{pgfonlayer}
+\end{tikztimingtable}

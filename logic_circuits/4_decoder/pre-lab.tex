@@ -1,0 +1,103 @@
+\section{Pre-lab 4}
+\begin{enumerate}
+    \noindent \begin{minipage}{\textwidth}
+        \item 4-to-16 decoder \par \bigskip
+        \begin{circuitikz}
+            \draw (3,10)coordinate (A)--(5,10)coordinate (B)--(5,6)coordinate (C)--(3,6)coordinate (D)--cycle;
+            \foreach \x/\y in {0/0.25, 1/0.5, 2/0.75}{
+                \draw ($(A)!\y!(D)$)--++(180:1)node[left] {$x_\x$};
+            }
+            \foreach \i in {1, 2, 3, 4, 5, 6, 7, 8}{
+                \draw ($(B)!\i/9!(C)$)--++(0:1);
+            }
+            \draw ($(C)!0.5!(D)$)node[above] {$en$}--++(270:1)--++(180:1)node[ieeestd and port, anchor=out] (and){};
+            \draw (and.in 1)--++(180:0.5)node[ieeestd not port, anchor=out] (inv){};
+            \node[left] at (and.in 2) {$en$};
+            \draw (inv.in)--++(180:0.5)node[circ] (junc){}--++(180:1)node[left] {$x_3$};
+            \draw (3,4)coordinate (A)--(5,4)coordinate (B)--(5,0)coordinate (C)--(3,0)coordinate (D)--cycle;
+            \foreach \x/\y in {0/0.25, 1/0.5, 2/0.75}{
+                \draw ($(A)!\y!(D)$)--++(180:1)node[left] {$x_\x$};
+            }
+            \foreach \i in {1, 2, 3, 4, 5, 6, 7, 8}{
+                \draw ($(B)!\i/9!(C)$)--++(0:1);
+            }
+            \draw ($(C)!0.5!(D)$)node[above] {$en$}--++(270:1)--++(180:1)node[ieeestd and port, anchor=out] (and2){};
+            \node[left] at (and2.in 2) {$en$};
+            \draw (junc)--++(270:6)--(and2.in 1);
+        \end{circuitikz}
+    \end{minipage}
+    
+    \par
+    \noindent \begin{minipage}{\textwidth}
+        \item 4-to-1 MUX \par \bigskip
+        \begin{circuitikz}
+            \draw (0,0)coordinate (A)--++(30:1)coordinate (B)--++(90:1.5)coordinate (C)--++(150:1)coordinate (D)--cycle;
+            \draw ($(A)!0.5!(B)$)--++(270:1)node[below] {$sel_0$};
+            \draw ($(A)!0.25!(D)$)node[right] {1}--++(180:1)node[left] {$d$};
+            \draw ($(A)!0.75!(D)$)node[right] {0}--++(180:1)node[left] {$c$};
+            \draw ($(B)!0.5!(C)$)--(1.75,1.25);
+            \draw (0,4)coordinate (A)--++(30:1)coordinate (B)--++(90:1.5)coordinate (C)--++(150:1)coordinate (D)--cycle;
+            \draw ($(A)!0.5!(B)$)--++(270:1)node[below] {$sel_0$};
+            \draw ($(A)!0.25!(D)$)node[right] {1}--++(180:1)node[left] {$b$};
+            \draw ($(A)!0.75!(D)$)node[right] {0}--++(180:1)node[left] {$a$};
+            \draw ($(B)!0.5!(C)$)--(1.75,5.25)node (muxa){};
+            \draw (3,2)coordinate (A)--++(30:1)coordinate (B)--++(90:1.5)coordinate (C)--++(150:1)coordinate (D)--cycle;
+            \draw ($(A)!0.5!(B)$)--++(270:1)node[below] {$sel_1$};
+            \draw ($(A)!0.25!(D)$)node[right] {1}--++(180:1.25)--(1.75,1.25);
+            \draw ($(A)!0.75!(D)$)node[right] {0}--++(180:1.25)--(1.75,5.25);
+            \draw ($(B)!0.5!(C)$)--++(0:1)node[right] {$o$};          
+        \end{circuitikz}
+    \end{minipage}
+    \par
+    \noindent \begin{minipage}{\textwidth}
+    \item
+        Binary to Hex \par \bigskip
+        \begin{tabular}{c|c c c c}
+            $a$ & 1011 & 0111 & 1110 & 1011 \\
+            & B & 7 & E & B \\ \\
+            $b$ & 1111 & 1001 & 1110 & 0100 \\
+            & F & 9 & E & 4 \\ \\
+            $c$ & 1101 & 1111 & 1111 & 0100 \\
+            & D & F & F & 4 \\ \\
+            $d$ & 1011 & 0110 & 1101 & 1110 \\
+            & B & 6 & D & E \\ \\
+            $e$ & 1010 & 0010 & 1011 & 1111 \\
+            & A & 2 & B & F \\ \\
+            $f$ & 1000 & 1110 & 1111 & 1011 \\
+            & 8 & E & F & B \\ \\
+            $g$ & 0011 & 1110 & 1111 & 0111 \\
+            & 3 & E & F & 7
+        \end{tabular}
+        \end{minipage}
+    \item Prescaler: 50,000
+
+    \begin{align*}
+        f_{out} & =\frac{f_{in}}{2N} \\
+        \frac{f_{out}}{f_{in}} & =\frac{1}{2N} \\
+        \frac{f_{in}}{f_{out}} & =2N \\
+        \frac{f_{in}}{2f_{out}} & =N & f_{in} & =T^{-1} \\
+        \frac{10^3}{2\cdot10^8} & =N=50,000 & f_{in} & =(10^{-3})^{-1}=10^3
+    \end{align*}
+    \noindent \begin{minipage}{\textwidth}
+    \item Decoder circuit \par \bigskip
+        \begin{circuitikz}
+            \draw (3,10)coordinate (A)--(5,10)coordinate (B)--(5,6)coordinate (C)--(3,6)coordinate (D)--cycle;
+            \foreach \x/\y in {a/0.25, b/0.5, c/0.75}{
+                \draw ($(A)!\y!(D)$)--++(180:1)node[left] {$\x$};
+            }
+            \foreach \i in {1, 2, 3, 4, 5, 6, 7, 8}{
+                \draw ($(B)!\i/9!(C)$)--++(0:1)coordinate (o\i){};
+            }
+            \draw ($(C)!0.5!(D)$)node[above] {$en$}--++(270:1);
+            \draw (o3)--++(0:1)--++(90:1)--++(0:2)node[ieeestd or port, anchor=in 1] (orx){};
+            \draw (o4)--++(0:2)node[circ] (junc){};
+            \draw (o5)--++(0:1)--++(270:1)--++(0:2)node[ieeestd or port, anchor=in 2] (ory){};
+            \draw (junc)--(orx.in 2-|junc)--(orx.in 2);
+            \draw (junc)--(ory.in 1-|junc)--(ory.in 1);
+            \node[right] at (orx.out){$x$};
+            \node[right] at (ory.out){$y$};            
+        \end{circuitikz}    
+    \end{minipage}
+   
+\end{enumerate}
+\newpage

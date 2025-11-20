@@ -1,0 +1,81 @@
+\usepackage{amsmath, graphicx}
+\usepackage{xcolor}
+\usepackage[top=1in, bottom=1in, left=1in, right=1in, includefoot]{geometry}
+\usepackage{fancyvrb}
+\usepackage{siunitx}
+\usepackage[formats]{listings}
+
+\lstdefinelanguage{ucf}{
+  sensitive=false,
+  alsoletter={.},
+  morekeywords={NET,LOC},
+  morecomment=[l]{\#},
+  morestring=[b]"
+}
+
+\lstdefinelanguage{xdc}{
+  sensitive=false,
+  alsoletter={.},
+  morekeywords={set_property,create_clock, get_nets, PACKAGE_PIN,get_ports},
+  morecomment=[l]{\#},
+  morestring=[b]"
+}
+
+\lstdefineformat{Vlog}{~=\( \sim \),^=\(^\wedge\)}
+
+\lstset{ %
+  basicstyle=\ttfamily,        % the size of the fonts that are used for the code
+  	format=Vlog,
+  breaklines=false,                 % sets automatic line breaking
+  language=Verilog,
+  commentstyle=\color{red},    % comment style
+  frame=single,                    % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},       % keyword style
+  morekeywords={*,...},            % if you want to add more keywords to the set
+  rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  tabsize=7,                       % sets default tabsize to 2 spaces
+}
+
+\usepackage{tikz}
+\usepackage[american]{circuitikz}
+\usetikzlibrary{calc,positioning,arrows,shapes.geometric}
+\usepackage{tikz-timing}
+\tikzset{
+  multiplexer/.style={
+    draw,
+    trapezium,
+    shape border uses incircle, 
+    shape border rotate=270,
+    minimum size=18pt
+  }  
+}
+
+
+\ctikzset{bipoles/not port/circle width=0.4}
+\ctikzset{tripoles/american nand port/circle width=0.4}
+\ctikzset{tripoles/american nor port/circle width=0.4}
+\ctikzset{tripoles/american nor port/input height=0.75}
+\ctikzset{tripoles/american nor port/input skip=0.18}
+\ctikzset{tripoles/american xnor port/circle width=0.4}
+\ctikzset{tripoles/american and port/port width=0.4}
+\ctikzset{tripoles/american and port/input height=0.6}
+\ctikzset{tripoles/american or port/port width=0.5}
+\ctikzset{tripoles/american or port/input skip=0.2}
+\ctikzset{tripoles/american or port/aaa=0.4}
+\ctikzset{tripoles/american or port/bbb=0.2}
+\ctikzset{tripoles/american or port/ccc=0.7}
+\ctikzset{tripoles/american xor port/port width=0.5}
+\ctikzset{tripoles/american xor port/input skip=0.15}
+\ctikzset{tripoles/american xor port/aaa=0.4}
+\ctikzset{tripoles/american xor port/bbb=0.2}
+\ctikzset{tripoles/american xor port/ccc=0.7}
+\ctikzset{tripoles/american xnor port/port width=0.75}
+\ctikzset{tripoles/american xnor port/input skip=0.2}
+\ctikzset{tripoles/american xnor port/aaa=0.5}
+\ctikzset{tripoles/american xnor port/bbb=0.4}
+\ctikzset{tripoles/american xnor port/ccc=0.4}
+\ctikzset{tripoles/pmos/gate width=0.5}
+\ctikzset{tripoles/pmos/base width=0.4}
+\ctikzset{nodes width=0.075}

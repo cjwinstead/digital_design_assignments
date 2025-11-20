@@ -1,0 +1,73 @@
+\ctikzset{bipoles/not port/circle width=0.4}
+\ctikzset{tripoles/american nand port/circle width=0.4}
+\ctikzset{tripoles/american nor port/circle width=0.4}
+\ctikzset{tripoles/american nor port/input height=0.6}
+\ctikzset{tripoles/american nor port/input skip=0.18}
+\ctikzset{tripoles/american xnor port/circle width=0.4}
+\ctikzset{tripoles/american and port/port width=0.4}
+\ctikzset{tripoles/american and port/input height=0.6}
+\ctikzset{tripoles/american or port/port width=0.5}
+\ctikzset{tripoles/american or port/input skip=0.2}
+\ctikzset{tripoles/american or port/aaa=0.4}
+\ctikzset{tripoles/american or port/bbb=0.2}
+\ctikzset{tripoles/american or port/ccc=0.7}
+\ctikzset{tripoles/american xor port/port width=0.5}
+\ctikzset{tripoles/american xor port/input skip=0.15}
+\ctikzset{tripoles/american xor port/aaa=0.4}
+\ctikzset{tripoles/american xor port/bbb=0.2}
+\ctikzset{tripoles/american xor port/ccc=0.7}
+\ctikzset{tripoles/american xnor port/port width=0.75}
+\ctikzset{tripoles/american xnor port/input skip=0.2}
+\ctikzset{tripoles/american xnor port/aaa=0.5}
+\ctikzset{tripoles/american xnor port/bbb=0.4}
+\ctikzset{tripoles/american xnor port/ccc=0.4}
+\ctikzset{tripoles/pmos/gate width=0.5}
+\ctikzset{tripoles/pmos/base width=0.4}
+\ctikzset{nodes width=0.075}
+\begin{tikzpicture}
+  \node[nor port] at (0,0) (nor1) {};
+  \node[nor port] at (0,-2) (nor2) {};
+
+  \draw (nor1.out) to[short,*-] ++(0,-0.25) coordinate (qa) (nor2.in 1) -- ++(0,0.25) -- (qa);
+  \draw (nor2.out) to[short,*-] ++(0,0.25) coordinate (qb) (nor1.in 2) -- ++(0,-0.25) -- (qb);
+  \draw (nor1.out) -- ++(0.5,0) node[anchor=west] {$Q^\prime$};
+  \draw (nor2.out) -- ++(0.5,0) node[anchor=west] {$Q$};
+
+  \draw (nor1.in 1) -- ++(-0.5,0) node[and port, anchor=out] (and1) {};
+  \draw (nor2.in 2) -- ++(-0.5,0) node[and port, anchor=out] (and2) {};
+  \draw (and1.in 2) -- (and2.in 1);
+  \draw ($(and1.in 2)!0.5!(and2.in 1)$) to[short,*-] ++(-0.5,0) node[anchor=east] {\texttt{clk}};
+  \draw (and1.in 1) -- ++(-0.5,0) node[anchor=east] {$S$};
+  \draw (and2.in 2) -- ++(-0.5,0) node[anchor=east] {$R$};
+
+
+  \node[anchor=north west] at (2,1) {\begin{minipage}{10cm}
+\begin{tikztimingtable}[%
+ timing/dslope =0.1 , timing/.style={x=1ex ,y=6ex }, x =2 ex ,
+ timing/rowdist =8ex ,
+ timing/name/.style ={ font =\sffamily \scriptsize },
+% timing/nodes/advanced,
+ ]
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+  {$S$} & 4L 10{4C}  \\
+  {$R$} & 8.0L 9{4C} \\
+  {\texttt{clk}} & 1.75L 2H 2L 4H 2L 2H 4L 2H 2L 4H 2L 2H 4L 2H 2L 4H 2L \\
+  {$Q$} & 2L ;[ dotted ] 2L;\\
+  {$Q^\prime$} & 2H ;[ dotted ] 2H;\\
+%
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \extracode
+  \begin{pgfonlayer}{background}
+    \begin{scope}[gray,semitransparent,semithick]
+      \horlines {}
+      \foreach \x in {0,1,...,22} {
+        \draw (\x,4) -- (\x,-20);
+      };
+    \end{scope}
+  \end{pgfonlayer}
+\end{tikztimingtable}
+  \end{minipage}
+  };
+
+\end{tikzpicture}
